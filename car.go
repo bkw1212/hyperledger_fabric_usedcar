@@ -72,6 +72,7 @@ func main() {
 type Wallet struct {
 	Name  string `json:"name"`
 	ID    string `json:"id"`
+	Password	string `json:"password"`
 	Token string `json:"token"`
 }
 
@@ -779,7 +780,7 @@ type UserData struct {
 
 func (s *SmartContract) creatUser(APIstub shim.ChaincodeStubInterface, args []string) pb.Response {
 
-	if len(args) != 2 {
+	if len(args) != 4 {
         return shim.Error("Incorrect number of arguments. Expecting 2")
     }
 
@@ -791,13 +792,13 @@ func (s *SmartContract) creatUser(APIstub shim.ChaincodeStubInterface, args []st
 	// check if theuser is in the network
     v, err: = APIstub.GetState(args[0])
     var tmp User
-    json.Unmarshal(v, & tmp)
+    json.Unmarshal(v, &tmp)
     if len(tmp.Password) >= 6 {
         return shim.Error("User already created")
     }
 
 	// create user
-    user := User {
+    user := UserData {
         args[0], args[1]
     }
 	userAsBytes, err := json.Marshal(user)
