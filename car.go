@@ -861,3 +861,5 @@ func (s *SmartContract) exist(APIstub shim.ChaincodeStubInterface, args []string
 	// get asset info
     return shim.Success(nil)
 }
+
+//sfasdfsaedfgseageg
