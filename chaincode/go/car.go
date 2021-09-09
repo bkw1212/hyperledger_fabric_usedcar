@@ -52,11 +52,11 @@ func (s *SmartContract) Invoke(APIstub shim.ChaincodeStubInterface) pb.Response 
 	} else if function == "login" {
 		return s.login(APIstub, args)
 	} else if function == "creatUser" {
-		return s.creatUser(APIstub,args)
+		return s.creatUser(APIstub, args)
 	} else if function == "exist" {
 		return s.exist(APIstub, args)
 	}
-	
+
 	fmt.Println("Please check your function : " + function)
 	return shim.Error("Unknown function")
 }
@@ -70,10 +70,10 @@ func main() {
 }
 
 type Wallet struct {
-	Name  string `json:"name"`
-	ID    string `json:"id"`
-	Password	string `json:"password"`
-	Token string `json:"token"`
+	Name     string `json:"name"`
+	ID       string `json:"id"`
+	Password string `json:"password"`
+	Token    string `json:"token"`
 }
 
 func (s *SmartContract) initWallet(APIstub shim.ChaincodeStubInterface) pb.Response {
@@ -138,12 +138,12 @@ func (s *SmartContract) getWallet(APIstub shim.ChaincodeStubInterface, args []st
 }
 
 type Car struct {
-	Model      string `json:"model"`
-	Maker      string `json:"maker"`
-	Price      string `json:"price"`
-	WalletID   string `json:"walletid"`
+	Model         string `json:"model"`
+	Maker         string `json:"maker"`
+	Price         string `json:"price"`
+	WalletID      string `json:"walletid"`
 	PurchaseCount string `json:"purchasecount"`
-	RepairCount string `json:"repaircount"`
+	RepairCount   string `json:"repaircount"`
 }
 
 type CarKey struct {
@@ -251,7 +251,6 @@ func generateKeyInsurance(APIstub shim.ChaincodeStubInterface, key string) []byt
 	return returnValueBytesrs
 }
 
-
 func (s *SmartContract) setWallet(APIstub shim.ChaincodeStubInterface, args []string) pb.Response {
 	if len(args) != 3 {
 		return shim.Error("Incorrect number of arguments. Expecting 3")
@@ -276,7 +275,7 @@ func (s *SmartContract) setCar(APIstub shim.ChaincodeStubInterface, args []strin
 	keyidx := strconv.Itoa(carkey.Idx)
 	fmt.Println("Key : " + carkey.Key + ", Idx : " + keyidx)
 
-	var car = Car{Model: args[0], Maker: args[1], Price: args[2], WalletID: args[3], PurchaseCount:"0", RepairCount: "0"}
+	var car = Car{Model: args[0], Maker: args[1], Price: args[2], WalletID: args[3], PurchaseCount: "0", RepairCount: "0"}
 	carAsJSONBytes, _ := json.Marshal(car)
 
 	var keyString = carkey.Key + keyidx
@@ -344,7 +343,6 @@ func (s *SmartContract) purchaseCar(APIstub shim.ChaincodeStubInterface, args []
 	var purchasecount int
 	var err error
 
-
 	if len(args) != 3 {
 		return shim.Error("Incorrect number of arguments. Expecting 3")
 	}
@@ -357,7 +355,7 @@ func (s *SmartContract) purchaseCar(APIstub shim.ChaincodeStubInterface, args []
 	json.Unmarshal(carAsBytes, &car)
 	carprice, _ = strconv.Atoi(car.Price)
 	purchasecount, _ = strconv.Atoi(car.PurchaseCount)
-	
+
 	car.PurchaseCount = strconv.Itoa(purchasecount + 1)
 
 	SellerAsBytes, err := APIstub.GetState(args[1])
@@ -369,10 +367,10 @@ func (s *SmartContract) purchaseCar(APIstub shim.ChaincodeStubInterface, args []
 	}
 
 	seller := Wallet{}
-	json.Unmarshal(SellerAsBytes, &seller)    
-	tokenToKey, _ = strconv.Atoi(seller.Token)    
+	json.Unmarshal(SellerAsBytes, &seller)
+	tokenToKey, _ = strconv.Atoi(seller.Token)
 
-	CustomerAsBytes, err := APIstub.GetState(args[0])  // 인자 반환
+	CustomerAsBytes, err := APIstub.GetState(args[0]) // 인자 반환
 	if err != nil {
 		return shim.Error("Failed to get state")
 	}
@@ -386,8 +384,12 @@ func (s *SmartContract) purchaseCar(APIstub shim.ChaincodeStubInterface, args []
 
 	json.Unmarshal(CustomerAsBytes, &car)
 
+	if customer.ID == car.WalletID {
+		return shim.Error("You are the owner of the car")
+	}
+
 	customer.Token = strconv.Itoa(tokenFromKey - carprice)
-	seller.Token = strconv.Itoa(tokenToKey + carprice) 
+	seller.Token = strconv.Itoa(tokenToKey + carprice)
 	car.WalletID = args[0]
 	updatedCustomerAsBytes, _ := json.Marshal(customer)
 	updatedSellerAsBytes, _ := json.Marshal(seller)
@@ -395,7 +397,7 @@ func (s *SmartContract) purchaseCar(APIstub shim.ChaincodeStubInterface, args []
 	APIstub.PutState(args[0], updatedCustomerAsBytes)
 	APIstub.PutState(args[1], updatedSellerAsBytes)
 	APIstub.PutState(args[2], updatedCarAsBytes)
-	
+
 	// buffer is a JSON array containing QueryResults
 	var buffer bytes.Buffer
 	buffer.WriteString("[")
@@ -458,14 +460,12 @@ func (s *SmartContract) getCar(APIstub shim.ChaincodeStubInterface, args []strin
 	buffer.WriteString(car.WalletID)
 	buffer.WriteString("\"")
 
-
 	buffer.WriteString("}")
 	bArrayMemberAlreadyWritten = true
 	buffer.WriteString("]\n")
 
 	return shim.Success(buffer.Bytes())
 }
-
 
 func (s *SmartContract) deleteCar(APIstub shim.ChaincodeStubInterface, args []string) pb.Response {
 	if len(args) != 1 {
@@ -483,13 +483,11 @@ func (s *SmartContract) deleteCar(APIstub shim.ChaincodeStubInterface, args []st
 	return shim.Success(nil)
 }
 
-
 type Repair struct {
-	Engineer    string `json:"engineer"`
-	Date        string `json:"date"`
-	Rcar		string `json:"rcar"`
+	Engineer string `json:"engineer"`
+	Date     string `json:"date"`
+	Rcar     string `json:"rcar"`
 }
-
 
 func (s *SmartContract) setRepair(APIstub shim.ChaincodeStubInterface, args []string) pb.Response {
 	var repaircount int
@@ -512,7 +510,7 @@ func (s *SmartContract) setRepair(APIstub shim.ChaincodeStubInterface, args []st
 
 	err := APIstub.PutState(keyString, RepairJSONBytes)
 	if err != nil {
-			return shim.Error("Failed to create asset " + repair.Engineer)
+		return shim.Error("Failed to create asset " + repair.Engineer)
 	}
 
 	repairkeyAsBytes, _ := json.Marshal(repairkey)
@@ -534,17 +532,14 @@ func (s *SmartContract) setRepair(APIstub shim.ChaincodeStubInterface, args []st
 
 	APIstub.PutState(args[2], updatedRepairAsBytes)
 
-
 	return shim.Success(nil)
 }
 
-
-
 func (s *SmartContract) getRepair(APIstub shim.ChaincodeStubInterface, args []string) pb.Response {
-	
+
 	repairAsBytes, err := APIstub.GetState(args[0])
 	if err != nil {
-			fmt.Println(err.Error())
+		fmt.Println(err.Error())
 	}
 
 	repair := Repair{}
@@ -555,7 +550,7 @@ func (s *SmartContract) getRepair(APIstub shim.ChaincodeStubInterface, args []st
 	bArrayMemberAlreadyWritten := false
 
 	if bArrayMemberAlreadyWritten == true {
-			buffer.WriteString(",")
+		buffer.WriteString(",")
 	}
 	buffer.WriteString("{\"Engineer\":")
 	buffer.WriteString("\"")
@@ -625,12 +620,10 @@ func (s *SmartContract) getAllRepair(APIstub shim.ChaincodeStubInterface) pb.Res
 	return shim.Success(buffer.Bytes())
 }
 
-
 type Insurance struct {
-	Icar    string `json:"icar"`
+	Icar string `json:"icar"`
 	Turm string `json:"turm"`
 }
-
 
 func (s *SmartContract) setInsurance(APIstub shim.ChaincodeStubInterface, args []string) pb.Response {
 
@@ -652,7 +645,7 @@ func (s *SmartContract) setInsurance(APIstub shim.ChaincodeStubInterface, args [
 
 	err := APIstub.PutState(keyString, InsuranceasJSONBytes)
 	if err != nil {
-			return shim.Error("Failed to create asset " + insurance.Icar)
+		return shim.Error("Failed to create asset " + insurance.Icar)
 	}
 
 	insurancekeyAsBytes, _ := json.Marshal(insurancekey)
@@ -673,7 +666,7 @@ func (s *SmartContract) getInsurance(APIstub shim.ChaincodeStubInterface, args [
 	json.Unmarshal(insuranceAsBytes, &insurance)
 
 	var buffer bytes.Buffer
-	buffer.WriteString("[") 
+	buffer.WriteString("[")
 	bArrayMemberAlreadyWritten := false
 
 	if bArrayMemberAlreadyWritten == true {
@@ -688,7 +681,6 @@ func (s *SmartContract) getInsurance(APIstub shim.ChaincodeStubInterface, args [
 	buffer.WriteString("\"")
 	buffer.WriteString(insurance.Turm)
 	buffer.WriteString("\"")
-
 
 	buffer.WriteString("}")
 	bArrayMemberAlreadyWritten = true
@@ -744,7 +736,6 @@ func (s *SmartContract) getAllInsurance(APIstub shim.ChaincodeStubInterface) pb.
 	return shim.Success(buffer.Bytes())
 }
 
-
 func (s *SmartContract) setRenewal(APIstub shim.ChaincodeStubInterface, args []string) pb.Response {
 
 	if len(args) != 2 {
@@ -757,46 +748,44 @@ func (s *SmartContract) setRenewal(APIstub shim.ChaincodeStubInterface, args []s
 	}
 
 	insurance := Insurance{}
-    json.Unmarshal(insurancebytes, &insurance)
+	json.Unmarshal(insurancebytes, &insurance)
 
 	insurance.Turm = args[1]
-    insurancebytes, _ = json.Marshal(insurance)
-    err2 := APIstub.PutState(args[0], insurancebytes)
-
+	insurancebytes, _ = json.Marshal(insurance)
+	err2 := APIstub.PutState(args[0], insurancebytes)
 
 	if err2 != nil {
-        return shim.Error(fmt.Sprintf("Failed to change insurance turm: %s", args[0]))
-    }
-    return shim.Success(nil)
+		return shim.Error(fmt.Sprintf("Failed to change insurance turm: %s", args[0]))
+	}
+	return shim.Success(nil)
 
 }
-
 
 func (s *SmartContract) creatUser(APIstub shim.ChaincodeStubInterface, args []string) pb.Response {
 
 	if len(args) != 4 {
-        return shim.Error("Incorrect number of arguments. Expecting 4")
-    }
+		return shim.Error("Incorrect number of arguments. Expecting 4")
+	}
 
 	// check the password length
-    if len(args[2]) < 6 {
-        return shim.Error("Password too short")
-    }
+	if len(args[2]) < 6 {
+		return shim.Error("Password too short")
+	}
 
 	// check if theuser is in the network
-    v, err := APIstub.GetState(args[1])
-    var tmp Wallet
-    json.Unmarshal(v, &tmp)
-    if len(tmp.Password) >= 6 {
-        return shim.Error("User already created")
-    }
+	v, err := APIstub.GetState(args[1])
+	var tmp Wallet
+	json.Unmarshal(v, &tmp)
+	if len(tmp.Password) >= 6 {
+		return shim.Error("User already created")
+	}
 
 	// create user
-    user := Wallet{args[0], args[1], args[2], args[3]}
+	user := Wallet{args[0], args[1], args[2], args[3]}
 	userAsBytes, err := json.Marshal(user)
-    if err != nil {
-        return shim.Error(err.Error())
-    }
+	if err != nil {
+		return shim.Error(err.Error())
+	}
 
 	// deploy it in the network
 	err = APIstub.PutState(user.ID, userAsBytes)
@@ -809,27 +798,27 @@ func (s *SmartContract) creatUser(APIstub shim.ChaincodeStubInterface, args []st
 
 func (s *SmartContract) login(APIstub shim.ChaincodeStubInterface, args []string) pb.Response {
 	// check arguments
-    if len(args) != 2 {
-        return shim.Error("Incorrect number of arguments. Expecting 2")
-    }
+	if len(args) != 2 {
+		return shim.Error("Incorrect number of arguments. Expecting 2")
+	}
 
 	// get user
-    value, err := APIstub.GetState(args[0])
-    if err != nil {
-        return shim.Error("User not found")
-    }
+	value, err := APIstub.GetState(args[0])
+	if err != nil {
+		return shim.Error("User not found")
+	}
 
 	// decrypt user[]byte("Status: " + asset.Status)
-    var user Wallet
-    json.Unmarshal(value, &user)
+	var user Wallet
+	json.Unmarshal(value, &user)
 
-    // check if the password is correct
-    if user.Password != args[1] {
-        return shim.Error("Credentials not correct")
-    }
+	// check if the password is correct
+	if user.Password != args[1] {
+		return shim.Error("Credentials not correct")
+	}
 
 	var buffer bytes.Buffer
-	buffer.WriteString("[") 
+	buffer.WriteString("[")
 	bArrayMemberAlreadyWritten := false
 
 	if bArrayMemberAlreadyWritten == true {
@@ -847,28 +836,27 @@ func (s *SmartContract) login(APIstub shim.ChaincodeStubInterface, args []string
 	return shim.Success(buffer.Bytes())
 
 	// get asset info
-    //return shim.Success(nil)
+	//return shim.Success(nil)
 }
-
 
 func (s *SmartContract) exist(APIstub shim.ChaincodeStubInterface, args []string) pb.Response {
 	// check arguments
-    if len(args) != 1 {
-        return shim.Error("Invalid Argument Number")
-    }
+	if len(args) != 1 {
+		return shim.Error("Invalid Argument Number")
+	}
 
 	// get user
-    value, _ := APIstub.GetState(args[0])
-	
+	value, _ := APIstub.GetState(args[0])
+
 	// decrypt user
-    var user Wallet
-    json.Unmarshal(value, &user)
-    
+	var user Wallet
+	json.Unmarshal(value, &user)
+
 	// check if the user exist
-    if len(user.Password) < 6 {
-        return shim.Error("User not found")
-    }
-    
+	if len(user.Password) < 6 {
+		return shim.Error("User not found")
+	}
+
 	// get asset info
-    return shim.Success(nil)
+	return shim.Success(nil)
 }
