@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Hyperledger Fabric Used-Car Application</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.0/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.3/angular.min.js"></script>
+    <style type="text/css">
+      header{
+        background-color: lightgray;
+        font-size:20px;
+        padding:20px;
+      }
+      header, .form-group{
+        margin-bottom: 3%;
+      }
+      .form-group{
+        width:50%;
+      }
+      #body{
+        margin-left:3%;
+        margin-right:3%;
+      }
+      .form-control{
+        margin: 8px;
+      }
+       #right_header{
+        width:20%;
+        font-size:15px;
+        margin-right:0px;
+      }
+      #left_header{
+        margin-left:0;
+        width:40%;
+        display:inline-block;
+      } 
+      #id {
+        width:49%;
+        display: inline-block;
+      }
+      table {
+          font-family: arial, sans-serif;
+          border-collapse: collapse;
+          width: 100%;
+      }
+      td, th {
+          border: 1px solid #dddddd;
+          text-align: left;
+          padding: 8px;
+      }
+      tr:nth-child(even) {
+          background-color: #dddddd;
+      }
+    </style>
+  </head>
+ <body ng-app="application" ng-controller="AppCtrl">
+    <header>
+      <div id="left_header">Hyperledger Fabric Hangaram Used-Car Application</div>
+    </header>
+    <div id="body">
+      <div class="form-group">
+        <h5 style="color:green;margin-bottom:2%" id="success_connect">{{connet_network}}</h5>
+        <label>네트워크 연결</label>
+        <p>
+        <input id="getCA" type="submit" value="Connect" class="btn btn-primary" ng-click="getCA()"></p>
+      </div>
+
+      <div class="form-group">
+          <h5 style="color:green;margin-bottom:2%" id="success_getwallet">{{search_wallet}}</h5>
+          <label>지갑 검색</label>
+          <p><input class="form-control" type="text" placeholder="Ex: 1Q2W3E4R" ng-model="walletid">
+          <input id="getWallet" type="submit" value="Search" class="btn btn-primary" ng-click="getWallet()"></p>
+      </div>
+      <div class="form-group">
+        <h5 style="color:green;margin-bottom:2%" id="success_getcar">Success to query</h5>
+        <label>차 매물 조회</label>
+        <p><input class="form-control" type="text" placeholder="Ex: CAR1" ng-model="carkey">
+        <input id="getCar" type="submit" value="Search" class="btn btn-primary" ng-click="getCar()"></p>
+        <p><input id="getAllCar" type="submit" value="Get all car" class="btn btn-primary" ng-click="getAllCar()"></p>
+      </div>
+        <table id="allCar" class="table" align="center">
+          <tr>
+            <th>ID</th>
+            <th>Model</th>
+            <th>Maker</th>
+            <th>Price</th>
+            <th>Owner</th>
+            <th>PurchaseCount</th>
+            <th>RepairCount</th>
+            <th>Buy</th>
+          </tr>
+          <tr ng-repeat="car in allCar">
+            <td>{{car.Key}}</td>
+            <td>{{car.model}}</td>
+            <td>{{car.maker}}</td>
+            <td>{{car.price}}</td>
+            <td>{{car.walletid}}</td>
+            <td>{{car.purchasecount}}</td>
+            <td>{{car.repaircount}}</td>
+            <td><input id="purchaseCar" type="submit" value="구매" ng-click="purchaseCar(car.Key)"></td>
+          </tr>
+          <h5 style="color:green;margin-bottom:2%" id="success_getallcar">{{purchase_car}}</h5>
+        </table>
+      <div class="form-group">
+        <label>차 매물 등록</label>
+        <h5 style="color:green;margin-bottom:2%" id="success_setcar">{{create_car}}</h5>
+        <br>
+        Model: <input class="form-control" type="text" placeholder="Ex: K7" ng-model="car.model">
+        Maker: <input class="form-control" type="text" placeholder="Ex: KIA" ng-model="car.maker">
+        Price: <input class="form-control" type="text" placeholder="Ex: 20" ng-model="car.price"> 
+        Owner: <input class="form-control" type="text" placeholder="Ex: 5T6Y7U8I" ng-model="car.walletid">
+        <input id="setCar" type="submit" value="Create" class="btn btn-primary" ng-click="setCar()"> 
+      </div>
+      
+      <div class="form-group">
+        <label>차 매물 삭제</label>
+        <h5 style="color:green;margin-bottom:2%" id="success_deletecar">{{delete_car}}</h5>
+        <p>
+        Key: <input class="form-control" type="text" placeholder="Ex: CAR0" ng-model="carkeydelete">
+        <input id="deleteCar" type="submit" value="Delete" class="btn btn-primary" ng-click="deleteCar()"></p>
+      </div>
+    
+
+      <div class="form-group">
+        <h5 style="color:green;margin-bottom:2%" id="success_getrepair">Success to query</h5>
+        <label>수리 내역 조회</label>
+        <p><input class="form-control" type="text" placeholder="Ex: REPAIR1" ng-model="repairkey">
+        <input id="getRepair" type="submit" value="Search" class="btn btn-primary" ng-click="getRepair()"></p>
+        <p><input id="getAllRepair" type="submit" value="Get all repair" class="btn btn-primary" ng-click="getAllRepair()"></p>
+      </div>
+        <table id="allRepair" class="table" align="center">
+          <tr>
+            <th>ID</th>
+            <th>Engineer</th>
+            <th>Date</th>
+            <th>Car</th>
+          </tr>
+          <tr ng-repeat="repair in allRepair">
+            <td>{{repair.Key}}</td>
+            <td>{{repair.engineer}}</td>
+            <td>{{repair.date}}</td>
+            <td>{{repair.rcar}}</td>
+          </tr>
+        </table>
+      <div class="form-group">
+        <label>수리 내역 등록</label>
+        <h5 style="color:green;margin-bottom:2%" id="success_setrepair">{{create_repair}}</h5>
+          <br>
+          Engineer: <input class="form-control" type="text" placeholder="Ex: Byun Kyo Woong" ng-model="repair.engineer">
+          Date: <input class="form-control" type="text" placeholder="Ex: 2021/08/08" ng-model="repair.date">
+          Carkey: <input class="form-control" type="text" placeholder="Ex: CAR1" ng-model="repair.rcar"> 
+          <input id="setRepair" type="submit" value="Create" class="btn btn-primary" ng-click="setRepair()"> 
+      </div>
+
+      <div class="form-group">
+        <h5 style="color:green;margin-bottom:2%" id="success_getinsurance">Success to query</h5>
+        <label>보험 조회</label>
+        <p><input class="form-control" type="text" placeholder="Ex: INSURANCE1" ng-model="insurancekey">
+        <input id="getInsurance" type="submit" value="Search" class="btn btn-primary" ng-click="getInsurance()"></p>
+        <p><input id="getAllInsurance" type="submit" value="Get all insurance" class="btn btn-primary" ng-click="getAllInsurance()"></p>
+      </div>
+        <table id="allInsurance" class="table" align="center">
+          <tr>
+            <th>ID</th>
+            <th>Information</th>
+            <th>Turm</th>
+          </tr>
+          <tr ng-repeat="insurance in allInsurance">
+            <td>{{insurance.Key}}</td>
+            <td>{{insurance.icar}}</td>
+            <td>{{insurance.turm}}</td>
+            
+          </tr>
+        </table>
+      <div class="form-group">
+        <label>보험 등록</label>
+        <h5 style="color:green;margin-bottom:2%" id="success_setinsurance">{{create_insurance}}</h5>
+        <br>
+        CarID: <input class="form-control" type="text" placeholder="Ex: CAR1" ng-model="insurance.icar">
+        Turm: <input class="form-control" type="text" placeholder="Ex: 2021/08/08 ~ 2023/08/07" ng-model="insurance.turm"> 
+        <input id="setInsurance" type="submit" value="Create" class="btn btn-primary" ng-click="setInsurance()"> 
+      </div>
+
+      <div class="form-group">
+        <label>보험 갱신</label>
+        <h5 style="color:green;margin-bottom:2%" id="success_setrenewal">{{create_renewal}}</h5>
+        <br>
+        InsuranceKey: <input class="form-control" type="text" placeholder="Ex: INSURANCE1" ng-model="renewal.insurancekey">
+        Turm: <input class="form-control" type="text" placeholder="Ex: 2021/08/08 ~ 2023/08/07" ng-model="renewal.turm"> 
+        <input id="setRenewal" type="submit" value="Change" class="btn btn-primary" ng-click="setRenewal()"> 
+      </div>
+    </div>
+ </body>
+  <script type="text/javascript" src="app.js"> </script>
+</html>

@@ -1,0 +1,83 @@
+{
+    "name": "basic-network",
+    "version": "1.0.0",
+    "client": {
+        "organization": "Sales1",
+        "connection": {
+            "timeout": {
+                "peer": {
+                    "endorser": "300"
+                },
+                "orderer": "300"
+            }
+        }
+    },
+    "channels": {
+        "channelsales1": {
+            "orderers": [
+                "orderer1.hub.com"
+            ],
+            "peers": {
+                "peer0.sales1.hub.com": {}
+            }
+        }
+    },
+    "organizations": {
+        "Sales1": {
+            "mspid": "Sales1Org",
+            "peers": [
+                "peer0.sales1.hub.com"
+            ],
+            "certificateAuthorities": [
+                "ca.sales1.hub.com"
+            ],
+            "adminPrivateKey": {
+                "path":"../../basic-network/crypto-config/peerOrganizations/sales1.hub.com/users/Admin@sales1.hub.com/msp/keystore/560910799c59557dd553e2d2ff69f7191d8de602820672f5a24e61835ab99ea4_sk"
+            },
+            "signedCert":{
+                "path":"../../basic-network/crypto-config/peerOrganizations/sales1.hub.com/users/Admin@sales1.hub.com/msp/signcerts/Admin@sales1.hub.com-cert.pem"
+            }
+        }
+    },
+    "orderers": {
+        "orderer1.hub.com": {
+            "url": "grpc://localhost:7050",
+            "grpcOptions":{
+                "ssl-target-name-override":"orderer1.hub.com",
+                "grpc-max-send-message-length": -1
+            },
+            "tlsCACerts": {
+                "path": "../../basic-network/crypto-config/ordererOrganizations/hub.com/orderers/orderer1.hub.com/msp/tlscacerts/tlsca.hub.com-cert.pem"
+            }
+        }
+    },
+    "peers": {
+        "peer0.sales1.hub.com": {
+            "url": "grpc://localhost:7051",
+            "tlsCACerts": {
+                "path": "../../basic-network/crypto-config/peerOrganizations/sales1.hub.com/peers/peer0.sales1.hub.com/msp/tlscacerts/tlsca.sales1.hub.com-cert.pem"
+            },
+            "grpcOptions": {
+                "ssl-target-name-override": "peer1.sales1.hub.com",
+                "hostnameOverride": "peer1.sales1.hub.com"
+            }
+        }
+    },
+    "certificateAuthorities": {
+        "ca.sales1.hub.com": {
+            "url": "http://localhost:7054",
+            "caName": "ca.sales1.hub.com",
+            "tlsCACerts": {
+                "path": "../../basic-network/crypto-config/peerOrganizations/sales1.hub.com/ca/ca.sales1.hub.com-cert.pem"
+            },
+            "registrar":{
+                "enrollId": "admin",
+                "enrollSecret": "adminpw",
+                "caName": "casales1"
+            },
+            "httpOptions": {
+                "verify": false
+            }
+        }
+    }
+}
