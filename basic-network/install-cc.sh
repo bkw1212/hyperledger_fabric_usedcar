@@ -2,17 +2,27 @@
 set -ev
 
 # install chaincode for channelsales1
-docker exec cli1 peer chaincode install -n car-cc-ch1 -v 1.0.1 -p chaincode/go
+docker exec cli1 peer chaincode install -n car-cc-ch1 -v 1.0.7 -p chaincode/go
 sleep 1
 # instantiate chaincode for channelsales1
-docker exec cli1 peer chaincode instantiate -o orderer1.hub.com:7050 -C channelsales1 -n car-cc-ch1 -v 1.0.1 -c '{"Args":[""]}' -P "OR ('Sales1Org.member','CustomerOrg.member', 'Insurance1Org.member', 'Repair1.member')"
+docker exec cli1 peer chaincode instantiate -o orderer1.hub.com:7050 -C channelsales1 -n car-cc-ch1 -v 1.0.7 -c '{"Args":[""]}' -P "OR ('Sales1Org.member','CustomerOrg.member', 'Insurance1Org.member', 'Repair1.member')"
 sleep 6
 # invoke chaincode for channelsales1
 #docker exec cli1 peer chaincode invoke -o orderer1.hub.com:7050 -C channelsales1 -n car-cc-ch1 -c '{"function":"initWallet","Args":[""]}'
-docker exec cli1 peer chaincode invoke -o orderer1.hub.com:7050 -C channelsales1 -n car-cc-ch1 -c '{"function":"setWallet","Args":["Byun", "bkw1212", "200"]}'
-sleep 2
-docker exec cli1 peer chaincode invoke -o orderer1.hub.com:7050 -C channelsales1 -n car-cc-ch1 -c '{"function":"setWallet","Args":["Lee", "lmj1212", "400"]}'
+#docker exec cli1 peer chaincode invoke -o orderer1.hub.com:7050 -C channelsales1 -n car-cc-ch1 -c '{"function":"setWallet","Args":["Byun", "bkw1212", "200"]}'
+#sleep 2
+#docker exec cli1 peer chaincode invoke -o orderer1.hub.com:7050 -C channelsales1 -n car-cc-ch1 -c '{"function":"setWallet","Args":["Lee", "lmj1212", "400"]}'
+#sleep 3
+
+docker exec cli1 peer chaincode invoke -o orderer1.hub.com:7050 -C channelsales1 -n car-cc-ch1 -c '{"function":"creatUser","Args":["Lee", "lmj1212","1234567", "400"]}'
 sleep 3
+
+docker exec cli1 peer chaincode invoke -o orderer1.hub.com:7050 -C channelsales1 -n car-cc-ch1 -c '{"function":"creatUser","Args":["Byun", "bkw1212","2345678", "200"]}'
+sleep 2
+
+docker exec cli1 peer chaincode query -o orderer1.hub.com:7050 -C channelsales1 -n car-cc-ch1 -c '{"function":"login","Args":["bkw1212","2345678"]}'
+sleep 2
+
 
 docker exec cli1 peer chaincode invoke -o orderer1.hub.com:7050 -C channelsales1 -n car-cc-ch1 -c '{"function":"setCar","Args":["G90", "Genesis", "40", "bkw1212"]}'
 sleep 2

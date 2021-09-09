@@ -772,12 +772,6 @@ func (s *SmartContract) setRenewal(APIstub shim.ChaincodeStubInterface, args []s
 }
 
 
-
-type UserData struct {
-	Name	     string `json:"name"`
-	Password	     string `json:"password"`
-}
-
 func (s *SmartContract) creatUser(APIstub shim.ChaincodeStubInterface, args []string) pb.Response {
 
 	if len(args) != 4 {
@@ -785,21 +779,21 @@ func (s *SmartContract) creatUser(APIstub shim.ChaincodeStubInterface, args []st
     }
 
 	// check the password length
-    if len(args[1]) < 6 {
+    if len(args[2]) < 6 {
         return shim.Error("Password too short")
     }
 
 	// check if theuser is in the network
-    v, err: = APIstub.GetState(args[0])
-    var tmp User
+    v, err: = APIstub.GetState(args[1])
+    var tmp Wallet
     json.Unmarshal(v, &tmp)
     if len(tmp.Password) >= 6 {
         return shim.Error("User already created")
     }
 
 	// create user
-    user := UserData {
-        args[0], args[1]
+    user := Wallet {
+        args[0], args[1], args[2], args[3]
     }
 	userAsBytes, err := json.Marshal(user)
     if err != nil {
@@ -807,7 +801,7 @@ func (s *SmartContract) creatUser(APIstub shim.ChaincodeStubInterface, args []st
     }
 
 	// deploy it in the network
-	err = APIstub.PutState(user.Name, userAsBytes)
+	err = APIstub.PutState(user.ID, userAsBytes)
 
 	if err != nil {
 		return shim.Error(err.Error())
@@ -828,7 +822,7 @@ func (s *SmartContract) login(APIstub shim.ChaincodeStubInterface, args []string
     }
 
 	// decrypt user[]byte("Status: " + asset.Status)
-    var user User
+    var user Wallet
     json.Unmarshal(value, & user)
 
     // check if the password is correct
@@ -840,6 +834,7 @@ func (s *SmartContract) login(APIstub shim.ChaincodeStubInterface, args []string
     return shim.Success(nil)
 }
 
+
 func (s *SmartContract) exist(APIstub shim.ChaincodeStubInterface, args []string) pb.Response {
 	// check arguments
     if len(args) != 1 {
@@ -850,7 +845,7 @@ func (s *SmartContract) exist(APIstub shim.ChaincodeStubInterface, args []string
     value, _: = APIstub.GetState(args[0])
 	
 	// decrypt user
-    var user User
+    var user Wallet
     json.Unmarshal(value, & user)
     
 	// check if the user exist
@@ -861,5 +856,3 @@ func (s *SmartContract) exist(APIstub shim.ChaincodeStubInterface, args []string
 	// get asset info
     return shim.Success(nil)
 }
-
-//sfasdfsaedfgseageg

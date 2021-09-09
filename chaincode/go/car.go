@@ -72,6 +72,7 @@ func main() {
 type Wallet struct {
 	Name  string `json:"name"`
 	ID    string `json:"id"`
+	Password	string `json:"password"`
 	Token string `json:"token"`
 }
 
@@ -457,15 +458,6 @@ func (s *SmartContract) getCar(APIstub shim.ChaincodeStubInterface, args []strin
 	buffer.WriteString(car.WalletID)
 	buffer.WriteString("\"")
 
-	buffer.WriteString(", \"PurchaseCount\":")
-	buffer.WriteString("\"")
-	buffer.WriteString(car.PurchaseCount)
-	buffer.WriteString("\"")
-
-	buffer.WriteString(", \"RepairCount\":")
-	buffer.WriteString("\"")
-	buffer.WriteString(car.RepairCount)
-	buffer.WriteString("\"")
 
 	buffer.WriteString("}")
 	bArrayMemberAlreadyWritten = true
@@ -575,7 +567,7 @@ func (s *SmartContract) getRepair(APIstub shim.ChaincodeStubInterface, args []st
 	buffer.WriteString(repair.Date)
 	buffer.WriteString("\"")
 
-	buffer.WriteString(", \"rcar\":")
+	buffer.WriteString(", \"Car\":")
 	buffer.WriteString("\"")
 	buffer.WriteString(repair.Rcar)
 	buffer.WriteString("\"")
@@ -687,12 +679,12 @@ func (s *SmartContract) getInsurance(APIstub shim.ChaincodeStubInterface, args [
 	if bArrayMemberAlreadyWritten == true {
 		buffer.WriteString(",")
 	}
-	buffer.WriteString("{\"icar\":")
+	buffer.WriteString("{\"CARNUM\":")
 	buffer.WriteString("\"")
 	buffer.WriteString(insurance.Icar)
 	buffer.WriteString("\"")
 
-	buffer.WriteString(", \"Turm\":")
+	buffer.WriteString(", \"TURM\":")
 	buffer.WriteString("\"")
 	buffer.WriteString(insurance.Turm)
 	buffer.WriteString("\"")
@@ -766,6 +758,7 @@ func (s *SmartContract) setRenewal(APIstub shim.ChaincodeStubInterface, args []s
 
 	insurance := Insurance{}
     json.Unmarshal(insurancebytes, &insurance)
+
 	insurance.Turm = args[1]
     insurancebytes, _ = json.Marshal(insurance)
     err2 := APIstub.PutState(args[0], insurancebytes)
@@ -779,40 +772,34 @@ func (s *SmartContract) setRenewal(APIstub shim.ChaincodeStubInterface, args []s
 }
 
 
-
-type User struct {
-	Name	     string `json:"name"`
-	Password	     string `json:"password"`
-}
-
 func (s *SmartContract) creatUser(APIstub shim.ChaincodeStubInterface, args []string) pb.Response {
 
-	if len(args) != 2 {
-        return shim.Error("Incorrect number of arguments. Expecting 2")
+	if len(args) != 4 {
+        return shim.Error("Incorrect number of arguments. Expecting 4")
     }
 
 	// check the password length
-    if len(args[1]) < 6 {
+    if len(args[2]) < 6 {
         return shim.Error("Password too short")
     }
 
 	// check if theuser is in the network
-    v, err := APIstub.GetState(args[0])
-    var tmp User
-    json.Unmarshal(v, & tmp)
+    v, err := APIstub.GetState(args[1])
+    var tmp Wallet
+    json.Unmarshal(v, &tmp)
     if len(tmp.Password) >= 6 {
         return shim.Error("User already created")
     }
 
 	// create user
-    user := User{args[0], args[1]}
+    user := Wallet{args[0], args[1], args[2], args[3]}
 	userAsBytes, err := json.Marshal(user)
     if err != nil {
         return shim.Error(err.Error())
     }
 
 	// deploy it in the network
-	err = APIstub.PutState(user.Name, userAsBytes)
+	err = APIstub.PutState(user.ID, userAsBytes)
 
 	if err != nil {
 		return shim.Error(err.Error())
@@ -833,17 +820,36 @@ func (s *SmartContract) login(APIstub shim.ChaincodeStubInterface, args []string
     }
 
 	// decrypt user[]byte("Status: " + asset.Status)
-    var user User
-    json.Unmarshal(value, & user)
+    var user Wallet
+    json.Unmarshal(value, &user)
 
     // check if the password is correct
     if user.Password != args[1] {
         return shim.Error("Credentials not correct")
     }
 
+	var buffer bytes.Buffer
+	buffer.WriteString("[") 
+	bArrayMemberAlreadyWritten := false
+
+	if bArrayMemberAlreadyWritten == true {
+		buffer.WriteString(",")
+	}
+	buffer.WriteString("{\"Success\":")
+	buffer.WriteString("\"")
+	buffer.WriteString(user.ID)
+	buffer.WriteString("\"")
+
+	buffer.WriteString("}")
+	bArrayMemberAlreadyWritten = true
+	buffer.WriteString("]\n")
+
+	return shim.Success(buffer.Bytes())
+
 	// get asset info
-    return shim.Success(nil)
+    //return shim.Success(nil)
 }
+
 
 func (s *SmartContract) exist(APIstub shim.ChaincodeStubInterface, args []string) pb.Response {
 	// check arguments
@@ -855,8 +861,8 @@ func (s *SmartContract) exist(APIstub shim.ChaincodeStubInterface, args []string
     value, _ := APIstub.GetState(args[0])
 	
 	// decrypt user
-    var user User
-    json.Unmarshal(value, & user)
+    var user Wallet
+    json.Unmarshal(value, &user)
     
 	// check if the user exist
     if len(user.Password) < 6 {

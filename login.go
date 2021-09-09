@@ -15,6 +15,7 @@ type Wallet struct {
 	ID    string `json:"id"`
 	Password	string `json:"password"`
 	Token string `json:"token"`
+
 }
 
 func (s *SmartContract) creatUser(APIstub shim.ChaincodeStubInterface, args []string) pb.Response {
