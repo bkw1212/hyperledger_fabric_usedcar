@@ -1,0 +1,865 @@
+version: '2'
+
+networks:
+  hangaram:
+
+services:
+  orderer1.hub.com:
+    container_name: orderer1.hub.com
+    image: hyperledger/fabric-orderer:1.4.3
+    environment:
+      - GODEBUG=netdns=go
+      - ORDERER_GENERAL_LOGLEVEL=debug
+      - ORDERER_GENERAL_LISTENADDRESS=0.0.0.0
+      - ORDERER_GENERAL_GENESISMETHOD=file
+      - ORDERER_GENERAL_GENESISFILE=/etc/hyperledger/configtx/genesis.block
+      - ORDERER_GENERAL_LOCALMSPID=OrdererOrg
+      - ORDERER_GENERAL_LOCALMSPDIR=/etc/hyperledger/msp/orderer/msp
+    working_dir: /opt/gopath/src/github.com/hyperledger/fabric/orderer
+    command: orderer
+    ports:
+      - 7050:7050
+    volumes:
+        - ./config/:/etc/hyperledger/configtx
+        - ./crypto-config/ordererOrganizations/hub.com/orderers/orderer1.hub.com/:/etc/hyperledger/msp/orderer
+    depends_on:
+      - kafka1.hub.com
+      - kafka2.hub.com
+      - kafka3.hub.com
+      - kafka4.hub.com  
+    networks:
+      - hangaram
+
+  orderer2.hub.com:
+    container_name: orderer2.hub.com
+    image: hyperledger/fabric-orderer:1.4.3
+    environment:
+      - GODEBUG=netdns=go
+      - ORDERER_GENERAL_LOGLEVEL=debug
+      - ORDERER_GENERAL_LISTENADDRESS=0.0.0.0
+      - ORDERER_GENERAL_GENESISMETHOD=file
+      - ORDERER_GENERAL_GENESISFILE=/etc/hyperledger/configtx/genesis.block
+      - ORDERER_GENERAL_LOCALMSPID=OrdererOrg
+      - ORDERER_GENERAL_LOCALMSPDIR=/etc/hyperledger/msp/orderer/msp
+    working_dir: /opt/gopath/src/github.com/hyperledger/fabric/orderer
+    command: orderer
+    ports:
+      - 8050:7050
+    volumes:
+        - ./config/:/etc/hyperledger/configtx
+        - ./crypto-config/ordererOrganizations/hub.com/orderers/orderer2.hub.com/:/etc/hyperledger/msp/orderer
+    depends_on:
+      - kafka1.hub.com
+      - kafka2.hub.com
+      - kafka3.hub.com
+      - kafka4.hub.com  
+    networks:
+      - hangaram
+
+  kafka1.hub.com:
+    container_name: kafka1.hub.com
+    extends:
+      file: ./base/kafka-base.yaml
+      service: kafka
+    environment:
+      - KAFKA_BROKER_ID=1
+    ports:
+      - 9092:9092
+      - 9093:9093
+    depends_on:
+      - zookeeper1.hub.com
+      - zookeeper2.hub.com
+      - zookeeper3.hub.com
+    networks:
+      - hangaram
+
+  kafka2.hub.com:
+    container_name: kafka2.hub.com
+    extends:
+      file: ./base/kafka-base.yaml
+      service: kafka
+    environment:
+      - KAFKA_BROKER_ID=2
+    ports:
+      - 10092:9092
+      - 10093:9093
+    depends_on:
+      - zookeeper1.hub.com
+      - zookeeper2.hub.com
+      - zookeeper3.hub.com
+    networks:
+      - hangaram
+  kafka3.hub.com:
+    container_name: kafka3.hub.com
+    extends:
+      file: ./base/kafka-base.yaml
+      service: kafka
+    environment:
+      - KAFKA_BROKER_ID=3
+    ports:
+      - 11092:9092
+      - 11093:9093
+    depends_on:
+      - zookeeper1.hub.com
+      - zookeeper2.hub.com
+      - zookeeper3.hub.com
+    networks:
+      - hangaram
+
+  kafka4.hub.com:
+    container_name: kafka4.hub.com
+    extends:
+      file: ./base/kafka-base.yaml
+      service: kafka
+    environment:
+      - KAFKA_BROKER_ID=4
+    ports:
+      - 12092:9092
+      - 12093:9093
+    depends_on:
+      - zookeeper1.hub.com
+      - zookeeper2.hub.com
+      - zookeeper3.hub.com
+    networks:
+      - hangaram
+  zookeeper1.hub.com:
+    container_name: zookeeper1.hub.com
+    extends:
+      file: ./base/kafka-base.yaml
+      service: zookeeper
+    environment:
+      - ZOO_MY_ID=1
+    ports:
+      - 2181:2181
+      - 2888:2888
+      - 3888:3888
+    networks:
+      - hangaram
+
+  zookeeper2.hub.com:
+    container_name: zookeeper2.hub.com
+    extends:
+      file: ./base/kafka-base.yaml
+      service: zookeeper
+    environment:
+      - ZOO_MY_ID=2
+    ports:
+      - 12181:2181
+      - 12888:2888
+      - 13888:3888
+    networks:
+      - hangaram
+
+  zookeeper3.hub.com:
+    container_name: zookeeper3.hub.com
+    extends:
+      file: ./base/kafka-base.yaml
+      service: zookeeper
+    environment:
+      - ZOO_MY_ID=3
+    ports:
+      - 22181:2181
+      - 22888:2888
+      - 25888:3888
+    networks:
+      - hangaram
+
+  peer0.sales1.hub.com:
+    container_name: peer0.sales1.hub.com
+    image: hyperledger/fabric-peer:1.4.3
+    environment:
+      - GODEBUG=netdns=go
+      - CORE_VM_ENDPOINT=unix:///host/var/run/docker.sock
+      - CORE_PEER_ID=peer0.sales1.hub.com
+      - CORE_LOGGING_PEER=debug
+      - CORE_CHAINCODE_LOGGING_LEVEL=DEBUG
+      - CORE_PEER_LOCALMSPID=Sales1Org
+      - CORE_PEER_MSPCONFIGPATH=/etc/hyperledger/msp/peer/
+      - CORE_PEER_ADDRESS=peer0.sales1.hub.com:7051
+      - CORE_PEER_GOSSIP_BOOTSTRAP=peer0.sales1.hub.com:7051
+      - CORE_PEER_GOSSIP_ENDPOINT=peer0.sales1.hub.com:7051
+      - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer0.sales1.hub.com:7051
+      - CORE_VM_DOCKER_HOSTCONFIG_NETWORKMODE=net_hangaram
+      - CORE_LEDGER_STATE_STATEDATABASE=CouchDB
+      - CORE_LEDGER_STATE_COUCHDBCONFIG_COUCHDBADDRESS=couchdb1:5984
+      - CORE_LEDGER_STATE_COUCHDBCONFIG_USERNAME=
+      - CORE_LEDGER_STATE_COUCHDBCONFIG_PASSWORD=
+
+    working_dir: /opt/gopath/src/github.com/hyperledger/fabric
+    command: peer node start
+    ports:
+      - 7051:7051
+      - 7053:7053
+    volumes:
+        - /var/run/:/host/var/run/
+        - ./crypto-config/peerOrganizations/sales1.hub.com/peers/peer0.sales1.hub.com/msp:/etc/hyperledger/msp/peer
+        - ./crypto-config/peerOrganizations/sales1.hub.com/users:/etc/hyperledger/msp/users
+        - ./config:/etc/hyperledger/configtx
+    depends_on:
+      - orderer1.hub.com
+      - orderer2.hub.com
+      - couchdb1
+    networks:
+      - hangaram
+
+  couchdb1:
+    container_name: couchdb1
+    image: hyperledger/fabric-couchdb
+    environment:
+      - COUCHDB_USER=
+      - COUCHDB_PASSWORD=
+    ports:
+      - 5984:5984
+    networks:
+      - hangaram
+
+  peer1.sales1.hub.com:
+    container_name: peer1.sales1.hub.com
+    image: hyperledger/fabric-peer:1.4.3
+    environment:
+      - GODEBUG=netdns=go
+      - CORE_VM_ENDPOINT=unix:///host/var/run/docker.sock
+      - CORE_PEER_ID=peer1.sales1.hub.com
+      - CORE_LOGGING_PEER=debug
+      - CORE_CHAINCODE_LOGGING_LEVEL=DEBUG
+      - CORE_PEER_LOCALMSPID=Sales1Org
+      - CORE_PEER_MSPCONFIGPATH=/etc/hyperledger/msp/peer/
+      - CORE_PEER_ADDRESS=peer1.sales1.hub.com:7051
+      - CORE_VM_DOCKER_HOSTCONFIG_NETWORKMODE=net_hangaram
+      - CORE_LEDGER_STATE_STATEDATABASE=CouchDB
+      - CORE_LEDGER_STATE_COUCHDBCONFIG_COUCHDBADDRESS=couchdb2:5984
+      - CORE_LEDGER_STATE_COUCHDBCONFIG_USERNAME=
+      - CORE_LEDGER_STATE_COUCHDBCONFIG_PASSWORD=
+    working_dir: /opt/gopath/src/github.com/hyperledger/fabric
+    command: peer node start
+    ports:
+      - 8051:7051
+      - 8053:7053
+    volumes:
+        - /var/run/:/host/var/run/
+        - ./crypto-config/peerOrganizations/sales1.hub.com/peers/peer1.sales1.hub.com/msp:/etc/hyperledger/msp/peer
+        - ./crypto-config/peerOrganizations/sales1.hub.com/users:/etc/hyperledger/msp/users
+        - ./config:/etc/hyperledger/configtx
+    depends_on:
+      - orderer1.hub.com
+      - orderer2.hub.com
+      - couchdb2
+    networks:
+      - hangaram
+
+  couchdb2:
+    container_name: couchdb2
+    image: hyperledger/fabric-couchdb
+    environment:
+      - COUCHDB_USER=
+      - COUCHDB_PASSWORD=
+    ports:
+      - 6984:5984
+    networks:
+      - hangaram
+
+  peer0.customer.hub.com:
+    container_name: peer0.customer.hub.com
+    image: hyperledger/fabric-peer:1.4.3
+    environment:
+      - GODEBUG=netdns=go
+      - CORE_VM_ENDPOINT=unix:///host/var/run/docker.sock
+      - CORE_PEER_ID=peer0.customer.hub.com
+      - CORE_LOGGING_PEER=debug
+      - CORE_CHAINCODE_LOGGING_LEVEL=DEBUG
+      - CORE_PEER_LOCALMSPID=CustomerOrg
+      - CORE_PEER_MSPCONFIGPATH=/etc/hyperledger/msp/peer/
+      - CORE_PEER_ADDRESS=peer0.customer.hub.com:7051
+      - CORE_VM_DOCKER_HOSTCONFIG_NETWORKMODE=net_hangaram
+      - CORE_LEDGER_STATE_STATEDATABASE=CouchDB
+      - CORE_LEDGER_STATE_COUCHDBCONFIG_COUCHDBADDRESS=couchdb3:5984
+      - CORE_LEDGER_STATE_COUCHDBCONFIG_USERNAME=
+      - CORE_LEDGER_STATE_COUCHDBCONFIG_PASSWORD=
+
+    working_dir: /opt/gopath/src/github.com/hyperledger/fabric
+    command: peer node start
+    ports:
+      - 9051:7051
+      - 9053:7053
+    volumes:
+        - /var/run/:/host/var/run/
+        - ./crypto-config/peerOrganizations/customer.hub.com/peers/peer0.customer.hub.com/msp:/etc/hyperledger/msp/peer
+        - ./crypto-config/peerOrganizations/customer.hub.com/users:/etc/hyperledger/msp/users
+        - ./config:/etc/hyperledger/configtx
+    depends_on:
+      - orderer1.hub.com
+      - orderer2.hub.com
+      - couchdb3
+    networks:
+      - hangaram
+
+  couchdb3:
+    container_name: couchdb3
+    image: hyperledger/fabric-couchdb
+    environment:
+      - COUCHDB_USER=
+      - COUCHDB_PASSWORD=
+    ports:
+      - 7984:5984
+    networks:
+      - hangaram
+
+  peer1.customer.hub.com:
+    container_name: peer1.customer.hub.com
+    image: hyperledger/fabric-peer:1.4.3
+    environment:
+      - GODEBUG=netdns=go
+      - CORE_VM_ENDPOINT=unix:///host/var/run/docker.sock
+      - CORE_PEER_ID=peer1.customer.hub.com
+      - CORE_LOGGING_PEER=debug
+      - CORE_CHAINCODE_LOGGING_LEVEL=DEBUG
+      - CORE_PEER_LOCALMSPID=CustomerOrg
+      - CORE_PEER_MSPCONFIGPATH=/etc/hyperledger/msp/peer/
+      - CORE_PEER_ADDRESS=peer1.customer.hub.com:7051
+      - CORE_VM_DOCKER_HOSTCONFIG_NETWORKMODE=net_hangaram
+      - CORE_LEDGER_STATE_STATEDATABASE=CouchDB
+      - CORE_LEDGER_STATE_COUCHDBCONFIG_COUCHDBADDRESS=couchdb4:5984
+      - CORE_LEDGER_STATE_COUCHDBCONFIG_USERNAME=
+      - CORE_LEDGER_STATE_COUCHDBCONFIG_PASSWORD=
+    working_dir: /opt/gopath/src/github.com/hyperledger/fabric
+    command: peer node start
+    ports:
+      - 10051:7051
+      - 10053:7053
+    volumes:
+        - /var/run/:/host/var/run/
+        - ./crypto-config/peerOrganizations/customer.hub.com/peers/peer1.customer.hub.com/msp:/etc/hyperledger/msp/peer
+        - ./crypto-config/peerOrganizations/customer.hub.com/users:/etc/hyperledger/msp/users
+        - ./config:/etc/hyperledger/configtx
+    depends_on:
+      - orderer1.hub.com
+      - orderer2.hub.com
+      - couchdb4
+    networks:
+      - hangaram
+
+  couchdb4:
+    container_name: couchdb4
+    image: hyperledger/fabric-couchdb
+    environment:
+      - COUCHDB_USER=
+      - COUCHDB_PASSWORD=
+    ports:
+      - 8984:5984
+    networks:
+      - hangaram
+
+  peer0.sales2.hub.com:
+    container_name: peer0.sales2.hub.com
+    image: hyperledger/fabric-peer:1.4.3
+    environment:
+      - GODEBUG=netdns=go
+      - CORE_VM_ENDPOINT=unix:///host/var/run/docker.sock
+      - CORE_PEER_ID=peer0.sales2.hub.com
+      - CORE_LOGGING_PEER=debug
+      - CORE_CHAINCODE_LOGGING_LEVEL=DEBUG
+      - CORE_PEER_LOCALMSPID=Sales2Org
+      - CORE_PEER_MSPCONFIGPATH=/etc/hyperledger/msp/peer/
+      - CORE_PEER_ADDRESS=peer0.sales2.hub.com:7051
+      - CORE_PEER_GOSSIP_BOOTSTRAP=peer0.sales2.hub.com:7051
+      - CORE_PEER_GOSSIP_ENDPOINT=peer0.sales2.hub.com:7051
+      - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer0.sales2.hub.com:7051
+      - CORE_VM_DOCKER_HOSTCONFIG_NETWORKMODE=net_hangaram
+      - CORE_LEDGER_STATE_STATEDATABASE=CouchDB
+      - CORE_LEDGER_STATE_COUCHDBCONFIG_COUCHDBADDRESS=couchdb5:5984
+      - CORE_LEDGER_STATE_COUCHDBCONFIG_USERNAME=
+      - CORE_LEDGER_STATE_COUCHDBCONFIG_PASSWORD=
+    working_dir: /opt/gopath/src/github.com/hyperledger/fabric
+    command: peer node start
+    ports:
+      - 11051:7051
+      - 11053:7053
+    volumes:
+        - /var/run/:/host/var/run/
+        - ./crypto-config/peerOrganizations/sales2.hub.com/peers/peer0.sales2.hub.com/msp:/etc/hyperledger/msp/peer
+        - ./crypto-config/peerOrganizations/sales2.hub.com/users:/etc/hyperledger/msp/users
+        - ./config:/etc/hyperledger/configtx
+    depends_on:
+      - orderer1.hub.com
+      - orderer2.hub.com
+      - couchdb5
+    networks:
+      - hangaram
+
+  couchdb5:
+    container_name: couchdb5
+    image: hyperledger/fabric-couchdb
+    environment:
+      - COUCHDB_USER=
+      - COUCHDB_PASSWORD=
+    ports:
+      - 9984:5984
+    networks:
+      - hangaram
+  
+  peer1.sales2.hub.com:
+    container_name: peer1.sales2.hub.com
+    image: hyperledger/fabric-peer:1.4.3
+    environment:
+      - GODEBUG=netdns=go
+      - CORE_VM_ENDPOINT=unix:///host/var/run/docker.sock
+      - CORE_PEER_ID=peer1.sales2.hub.com
+      - CORE_LOGGING_PEER=debug
+      - CORE_CHAINCODE_LOGGING_LEVEL=DEBUG
+      - CORE_PEER_LOCALMSPID=Sales2Org
+      - CORE_PEER_MSPCONFIGPATH=/etc/hyperledger/msp/peer/
+      - CORE_PEER_ADDRESS=peer1.sales2.hub.com:7051
+      - CORE_VM_DOCKER_HOSTCONFIG_NETWORKMODE=net_hangaram
+      - CORE_LEDGER_STATE_STATEDATABASE=CouchDB
+      - CORE_LEDGER_STATE_COUCHDBCONFIG_COUCHDBADDRESS=couchdb6:5984
+      - CORE_LEDGER_STATE_COUCHDBCONFIG_USERNAME=
+      - CORE_LEDGER_STATE_COUCHDBCONFIG_PASSWORD=
+    working_dir: /opt/gopath/src/github.com/hyperledger/fabric
+    command: peer node start
+    ports:
+      - 12051:7051
+      - 12053:7053
+    volumes:
+        - /var/run/:/host/var/run/
+        - ./crypto-config/peerOrganizations/sales2.hub.com/peers/peer1.sales2.hub.com/msp:/etc/hyperledger/msp/peer
+        - ./crypto-config/peerOrganizations/sales2.hub.com/users:/etc/hyperledger/msp/users
+        - ./config:/etc/hyperledger/configtx
+    depends_on:
+      - orderer1.hub.com
+      - orderer2.hub.com
+      - couchdb6
+    networks:
+      - hangaram
+
+  couchdb6:
+    container_name: couchdb6
+    image: hyperledger/fabric-couchdb
+    environment:
+      - COUCHDB_USER=
+      - COUCHDB_PASSWORD=
+    ports:
+      - 10984:5984
+    networks:
+      - hangaram
+
+#  peer0.insurance1.hub.com:
+#    container_name: peer0.insurance1.hub.com
+#    image: hyperledger/fabric-peer:1.4.3
+#    environment:
+#      - GODEBUG=netdns=go
+#      - CORE_VM_ENDPOINT=unix:///host/var/run/docker.sock
+#      - CORE_PEER_ID=peer0.insurance1.hub.com
+#      - CORE_LOGGING_PEER=debug
+#      - CORE_CHAINCODE_LOGGING_LEVEL=DEBUG
+#      - CORE_PEER_LOCALMSPID=Insurance1Org
+#      - CORE_PEER_MSPCONFIGPATH=/etc/hyperledger/msp/peer/
+#      - CORE_PEER_ADDRESS=peer0.insurance1.hub.com:7051
+#      - CORE_PEER_GOSSIP_BOOTSTRAP=peer0.insurance1.hub.com:7051
+#      - CORE_PEER_GOSSIP_ENDPOINT=peer0.insurance1.hub.com:7051
+#      - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer0.insurance1.hub.com:7051
+#      - CORE_VM_DOCKER_HOSTCONFIG_NETWORKMODE=net_hangaram
+#      - CORE_LEDGER_STATE_STATEDATABASE=CouchDB
+#      - CORE_LEDGER_STATE_COUCHDBCONFIG_COUCHDBADDRESS=couchdb7:5984
+#      - CORE_LEDGER_STATE_COUCHDBCONFIG_USERNAME=
+#      - CORE_LEDGER_STATE_COUCHDBCONFIG_PASSWORD=
+
+#    working_dir: /opt/gopath/src/github.com/hyperledger/fabric
+#    command: peer node start
+#    ports:
+#      - 13051:7051
+#      - 13053:7053
+#    volumes:
+#        - /var/run/:/host/var/run/
+#        - ./crypto-config/peerOrganizations/insurance1.hub.com/peers/peer0.insurance1.hub.com/msp:/etc/hyperledger/msp/peer
+#        - ./crypto-config/peerOrganizations/insurance1.hub.com/users:/etc/hyperledger/msp/users
+#        - ./config:/etc/hyperledger/configtx
+#    depends_on:
+#      - orderer1.hub.com
+#      - orderer2.hub.com
+#      - couchdb7
+#    networks:
+#      - hangaram
+
+#  couchdb7:
+#    container_name: couchdb7
+#    image: hyperledger/fabric-couchdb
+#    environment:
+#      - COUCHDB_USER=
+#      - COUCHDB_PASSWORD=
+#    ports:
+#      - 11984:5984
+#    networks:
+#      - hangaram
+
+#  peer1.insurance1.hub.com:
+#    container_name: peer1.insurance1.hub.com
+#    image: hyperledger/fabric-peer:1.4.3
+#    environment:
+#      - GODEBUG=netdns=go
+#      - CORE_VM_ENDPOINT=unix:///host/var/run/docker.sock
+#      - CORE_PEER_ID=peer1.insurance1.hub.com
+#      - CORE_LOGGING_PEER=debug
+#      - CORE_CHAINCODE_LOGGING_LEVEL=DEBUG
+#      - CORE_PEER_LOCALMSPID=Insurance1Org
+#      - CORE_PEER_MSPCONFIGPATH=/etc/hyperledger/msp/peer/
+#      - CORE_PEER_ADDRESS=peer1.insurance1.hub.com:7051
+#      - CORE_VM_DOCKER_HOSTCONFIG_NETWORKMODE=net_hangaram
+#      - CORE_LEDGER_STATE_STATEDATABASE=CouchDB
+#      - CORE_LEDGER_STATE_COUCHDBCONFIG_COUCHDBADDRESS=couchdb8:5984
+#      - CORE_LEDGER_STATE_COUCHDBCONFIG_USERNAME=
+#      - CORE_LEDGER_STATE_COUCHDBCONFIG_PASSWORD=
+#    working_dir: /opt/gopath/src/github.com/hyperledger/fabric
+#    command: peer node start
+#    ports:
+#      - 14051:7051
+#      - 14053:7053
+#    volumes:
+#        - /var/run/:/host/var/run/
+#        - ./crypto-config/peerOrganizations/insurance1.hub.com/peers/peer1.insurance1.hub.com/msp:/etc/hyperledger/msp/peer
+#        - ./crypto-config/peerOrganizations/insurance1.hub.com/users:/etc/hyperledger/msp/users
+#        - ./config:/etc/hyperledger/configtx
+#    depends_on:
+#      - orderer1.hub.com
+#      - orderer2.hub.com
+#      - couchdb8
+#    networks:
+#      - hangaram
+
+#  couchdb8:
+#    container_name: couchdb8
+#    image: hyperledger/fabric-couchdb
+#    environment:
+#      - COUCHDB_USER=
+#      - COUCHDB_PASSWORD=
+#    ports:
+#      - 12984:5984
+#    networks:
+#      - hangaram
+
+#  peer0.insurance2.hub.com:
+#    container_name: peer0.insurance2.hub.com
+#    image: hyperledger/fabric-peer:1.4.3
+#    environment:
+#      - GODEBUG=netdns=go
+#      - CORE_VM_ENDPOINT=unix:///host/var/run/docker.sock
+#      - CORE_PEER_ID=peer0.insurance2.hub.com
+#      - CORE_LOGGING_PEER=debug
+#      - CORE_CHAINCODE_LOGGING_LEVEL=DEBUG
+#      - CORE_PEER_LOCALMSPID=Insurance2Org
+#      - CORE_PEER_MSPCONFIGPATH=/etc/hyperledger/msp/peer/
+#      - CORE_PEER_ADDRESS=peer0.insurance2.hub.com:7051
+#      - CORE_PEER_GOSSIP_BOOTSTRAP=peer0.insurance2.hub.com:7051
+#      - CORE_PEER_GOSSIP_ENDPOINT=peer0.insurance2.hub.com:7051
+#      - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer0.insurance2.hub.com:7051
+#      - CORE_VM_DOCKER_HOSTCONFIG_NETWORKMODE=net_hangaram
+#      - CORE_LEDGER_STATE_STATEDATABASE=CouchDB
+#      - CORE_LEDGER_STATE_COUCHDBCONFIG_COUCHDBADDRESS=couchdb9:5984
+#      - CORE_LEDGER_STATE_COUCHDBCONFIG_USERNAME=
+#      - CORE_LEDGER_STATE_COUCHDBCONFIG_PASSWORD=
+
+#    working_dir: /opt/gopath/src/github.com/hyperledger/fabric
+#    command: peer node start
+#    ports:
+#      - 15051:7051
+#      - 15053:7053
+#    volumes:
+#        - /var/run/:/host/var/run/
+#        - ./crypto-config/peerOrganizations/insurance2.hub.com/peers/peer0.insurance2.hub.com/msp:/etc/hyperledger/msp/peer
+#        - ./crypto-config/peerOrganizations/insurance2.hub.com/users:/etc/hyperledger/msp/users
+#        - ./config:/etc/hyperledger/configtx
+#    depends_on:
+#      - orderer1.hub.com
+#      - orderer2.hub.com
+#      - couchdb9
+#    networks:
+#      - hangaram
+
+#  couchdb9:
+#    container_name: couchdb9
+#    image: hyperledger/fabric-couchdb
+#    environment:
+#      - COUCHDB_USER=
+#      - COUCHDB_PASSWORD=
+#    ports:
+#      - 13984:5984
+#    networks:
+#      - hangaram
+
+#  peer1.insurance2.hub.com:
+#    container_name: peer1.insurance2.hub.com
+#    image: hyperledger/fabric-peer:1.4.3
+#    environment:
+#      - GODEBUG=netdns=go
+#      - CORE_VM_ENDPOINT=unix:///host/var/run/docker.sock
+#      - CORE_PEER_ID=peer1.insurance2.hub.com
+#      - CORE_LOGGING_PEER=debug
+#      - CORE_CHAINCODE_LOGGING_LEVEL=DEBUG
+#      - CORE_PEER_LOCALMSPID=Insurance2Org
+#      - CORE_PEER_MSPCONFIGPATH=/etc/hyperledger/msp/peer/
+#      - CORE_PEER_ADDRESS=peer1.insurance2.hub.com:7051
+#      - CORE_VM_DOCKER_HOSTCONFIG_NETWORKMODE=net_hangaram
+#      - CORE_LEDGER_STATE_STATEDATABASE=CouchDB
+#      - CORE_LEDGER_STATE_COUCHDBCONFIG_COUCHDBADDRESS=couchdb10:5984
+#      - CORE_LEDGER_STATE_COUCHDBCONFIG_USERNAME=
+#      - CORE_LEDGER_STATE_COUCHDBCONFIG_PASSWORD=
+#    working_dir: /opt/gopath/src/github.com/hyperledger/fabric
+#    command: peer node start
+#    ports:
+#      - 16051:7051
+#      - 16053:7053
+#    volumes:
+#        - /var/run/:/host/var/run/
+#        - ./crypto-config/peerOrganizations/insurance2.hub.com/peers/peer1.insurance2.hub.com/msp:/etc/hyperledger/msp/peer
+#        - ./crypto-config/peerOrganizations/insurance2.hub.com/users:/etc/hyperledger/msp/users
+#        - ./config:/etc/hyperledger/configtx
+#    depends_on:
+#      - orderer1.hub.com
+#      - orderer2.hub.com
+#      - couchdb8
+#    networks:
+#      - hangaram
+
+#  couchdb10:
+#    container_name: couchdb10
+#    image: hyperledger/fabric-couchdb
+#    environment:
+#      - COUCHDB_USER=
+#      - COUCHDB_PASSWORD=
+#    ports:
+#      - 14984:5984
+#    networks:
+#      - hangaram
+
+#  peer0.repair1.hub.com:
+#    container_name: peer0.repair1.hub.com
+#    image: hyperledger/fabric-peer:1.4.3
+#    environment:
+#      - GODEBUG=netdns=go
+#      - CORE_VM_ENDPOINT=unix:///host/var/run/docker.sock
+#      - CORE_PEER_ID=peer0.repiar1.hub.com
+#      - CORE_LOGGING_PEER=debug
+#      - CORE_CHAINCODE_LOGGING_LEVEL=DEBUG
+#      - CORE_PEER_LOCALMSPID=Repair1Org
+#      - CORE_PEER_MSPCONFIGPATH=/etc/hyperledger/msp/peer/
+#      - CORE_PEER_ADDRESS=peer0.repair1.hub.com:7051
+#      - CORE_PEER_GOSSIP_BOOTSTRAP=peer0.repair1.hub.com:7051
+#      - CORE_PEER_GOSSIP_ENDPOINT=peer0.repair1.hub.com:7051
+#      - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer0.repiar1.hub.com:7051
+#      - CORE_VM_DOCKER_HOSTCONFIG_NETWORKMODE=net_hangaram
+#      - CORE_LEDGER_STATE_STATEDATABASE=CouchDB
+#      - CORE_LEDGER_STATE_COUCHDBCONFIG_COUCHDBADDRESS=couchdb11:5984
+#      - CORE_LEDGER_STATE_COUCHDBCONFIG_USERNAME=
+#      - CORE_LEDGER_STATE_COUCHDBCONFIG_PASSWORD=
+
+#    working_dir: /opt/gopath/src/github.com/hyperledger/fabric
+#    command: peer node start
+#    ports:
+#      - 17051:7051
+#      - 17053:7053
+#    volumes:
+#        - /var/run/:/host/var/run/
+#        - ./crypto-config/peerOrganizations/repair1.hub.com/peers/peer0.repair1.hub.com/msp:/etc/hyperledger/msp/peer
+#        - ./crypto-config/peerOrganizations/repair1.hub.com/users:/etc/hyperledger/msp/users
+#        - ./config:/etc/hyperledger/configtx
+#    depends_on:
+#      - orderer1.hub.com
+#      - orderer2.hub.com
+#      - couchdb11
+#    networks:
+#      - hangaram
+
+#  couchdb11:
+#    container_name: couchdb11
+#    image: hyperledger/fabric-couchdb
+#    environment:
+#      - COUCHDB_USER=
+#      - COUCHDB_PASSWORD=
+#    ports:
+#      - 15984:5984
+#    networks:
+#      - hangaram
+
+# peer1.repair1.hub.com:
+#    container_name: peer1.repair1.hub.com
+#    image: hyperledger/fabric-peer:1.4.3
+#    environment:
+#      - GODEBUG=netdns=go
+#      - CORE_VM_ENDPOINT=unix:///host/var/run/docker.sock
+#      - CORE_PEER_ID=peer1.repair1.hub.com
+#      - CORE_LOGGING_PEER=debug
+#      - CORE_CHAINCODE_LOGGING_LEVEL=DEBUG
+#      - CORE_PEER_LOCALMSPID=Repair1Org
+#      - CORE_PEER_MSPCONFIGPATH=/etc/hyperledger/msp/peer/
+#      - CORE_PEER_ADDRESS=peer1.repair1.hub.com:7051
+#      - CORE_VM_DOCKER_HOSTCONFIG_NETWORKMODE=net_hangaram
+#      - CORE_LEDGER_STATE_STATEDATABASE=CouchDB
+#      - CORE_LEDGER_STATE_COUCHDBCONFIG_COUCHDBADDRESS=couchdb12:5984
+#      - CORE_LEDGER_STATE_COUCHDBCONFIG_USERNAME=
+#      - CORE_LEDGER_STATE_COUCHDBCONFIG_PASSWORD=
+#    working_dir: /opt/gopath/src/github.com/hyperledger/fabric
+#    command: peer node start
+#    ports:
+#      - 18051:7051
+#      - 18053:7053
+#    volumes:
+#        - /var/run/:/host/var/run/
+#        - ./crypto-config/peerOrganizations/repair1.hub.com/peers/peer1.repair1.hub.com/msp:/etc/hyperledger/msp/peer
+#        - ./crypto-config/peerOrganizations/repair1.hub.com/users:/etc/hyperledger/msp/users
+#        - ./config:/etc/hyperledger/configtx
+#    depends_on:
+#      - orderer1.hub.com
+#      - orderer2.hub.com
+#      - couchdb12
+#    networks:
+#      - hangaram
+
+#  couchdb12:
+#    container_name: couchdb12
+#    image: hyperledger/fabric-couchdb
+#    environment:
+#      - COUCHDB_USER=
+#      - COUCHDB_PASSWORD=
+#    ports:
+#      - 16984:5984
+#    networks:
+#      - hangaram
+
+#  peer0.repair2.hub.com:
+#    container_name: peer0.repair2.hub.com
+#    image: hyperledger/fabric-peer:1.4.3
+#    environment:
+#      - GODEBUG=netdns=go
+#      - CORE_VM_ENDPOINT=unix:///host/var/run/docker.sock
+#      - CORE_PEER_ID=peer0.repiar2.hub.com
+#      - CORE_LOGGING_PEER=debug
+#     - CORE_CHAINCODE_LOGGING_LEVEL=DEBUG
+#      - CORE_PEER_LOCALMSPID=Repair2Org
+#     - CORE_PEER_MSPCONFIGPATH=/etc/hyperledger/msp/peer/
+#     - CORE_PEER_ADDRESS=peer0.repair2.hub.com:7051
+#      - CORE_PEER_GOSSIP_BOOTSTRAP=peer0.repair2.hub.com:7051
+#      - CORE_PEER_GOSSIP_ENDPOINT=peer0.repair2.hub.com:7051
+#      - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer0.repiar2.hub.com:7051
+#      - CORE_VM_DOCKER_HOSTCONFIG_NETWORKMODE=net_hangaram
+#      - CORE_LEDGER_STATE_STATEDATABASE=CouchDB
+#      - CORE_LEDGER_STATE_COUCHDBCONFIG_COUCHDBADDRESS=couchdb13:5984
+#      - CORE_LEDGER_STATE_COUCHDBCONFIG_USERNAME=
+#      - CORE_LEDGER_STATE_COUCHDBCONFIG_PASSWORD=
+
+#    working_dir: /opt/gopath/src/github.com/hyperledger/fabric
+#    command: peer node start
+#    ports:
+#      - 19051:7051
+#      - 19053:7053
+#    volumes:
+#        - /var/run/:/host/var/run/
+#        - ./crypto-config/peerOrganizations/repair2.hub.com/peers/peer0.repair2.hub.com/msp:/etc/hyperledger/msp/peer
+#        - ./crypto-config/peerOrganizations/repair2.hub.com/users:/etc/hyperledger/msp/users
+#        - ./config:/etc/hyperledger/configtx
+#    depends_on:
+#      - orderer1.hub.com
+#      - orderer2.hub.com
+#      - couchdb13
+#    networks:
+#      - hangaram
+
+#  couchdb13:
+#    container_name: couchdb13
+#    image: hyperledger/fabric-couchdb
+#    environment:
+#      - COUCHDB_USER=
+#      - COUCHDB_PASSWORD=
+#    ports:
+#      - 17984:5984
+#    networks:
+#      - hangaram
+
+#  peer1.repair2.hub.com:
+#    container_name: peer1.repair2.hub.com
+#    image: hyperledger/fabric-peer:1.4.3
+#    environment:
+#      - GODEBUG=netdns=go
+#      - CORE_VM_ENDPOINT=unix:///host/var/run/docker.sock
+#      - CORE_PEER_ID=peer1.repair2.hub.com
+#      - CORE_LOGGING_PEER=debug
+#      - CORE_CHAINCODE_LOGGING_LEVEL=DEBUG
+#      - CORE_PEER_LOCALMSPID=Repair2Org
+#      - CORE_PEER_MSPCONFIGPATH=/etc/hyperledger/msp/peer/
+#      - CORE_PEER_ADDRESS=peer1.repair2.hub.com:7051
+#      - CORE_VM_DOCKER_HOSTCONFIG_NETWORKMODE=net_hangaram
+#      - CORE_LEDGER_STATE_STATEDATABASE=CouchDB
+#      - CORE_LEDGER_STATE_COUCHDBCONFIG_COUCHDBADDRESS=couchdb14:5984
+#      - CORE_LEDGER_STATE_COUCHDBCONFIG_USERNAME=
+#      - CORE_LEDGER_STATE_COUCHDBCONFIG_PASSWORD=
+#    working_dir: /opt/gopath/src/github.com/hyperledger/fabric
+#    command: peer node start
+#    ports:
+#      - 20051:7051
+#      - 20053:7053
+#    volumes:
+#        - /var/run/:/host/var/run/
+#        - ./crypto-config/peerOrganizations/repair2.hub.com/peers/peer1.repair2.hub.com/msp:/etc/hyperledger/msp/peer
+#        - ./crypto-config/peerOrganizations/repair2.hub.com/users:/etc/hyperledger/msp/users
+#        - ./config:/etc/hyperledger/configtx
+#    depends_on:
+#      - orderer1.hub.com
+#      - orderer2.hub.com
+#      - couchdb14
+#    networks:
+#      - hangaram
+
+#  couchdb14:
+#    container_name: couchdb14
+#    image: hyperledger/fabric-couchdb
+#    environment:
+#      - COUCHDB_USER=
+#      - COUCHDB_PASSWORD=
+#    ports:
+#      - 18984:5984
+#    networks:
+#      - hangaram
+
+
+  cli1:
+    container_name: cli1
+    image: hyperledger/fabric-tools
+    tty: true
+    environment:
+      - GOPATH=/opt/gopath
+      - CORE_VM_ENDPOINT=unix:///host/var/run/docker.sock
+      - FABRIC_LOGGING_SPEC=INFO
+      - CORE_PEER_ID=cli
+      - CORE_PEER_ADDRESS=peer0.sales1.hub.com:7051
+      - CORE_PEER_LOCALMSPID=Sales1Org
+      - CORE_PEER_MSPCONFIGPATH=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/sales1.hub.com/users/Admin@sales1.hub.com/msp
+      - CORE_CHAINCODE_KEEPALIVE=10
+    working_dir: /opt/gopath/src/github.com/hyperledger/fabric/peer
+    command: /bin/bash
+    volumes:
+        - /var/run/:/host/var/run/
+        - ./../chaincode/:/opt/gopath/src/chaincode/
+        - ./crypto-config:/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/
+        - ./config:/etc/hyperledger/configtx
+    networks:
+      - hangaram
+  cli2:
+    container_name: cli2
+    image: hyperledger/fabric-tools
+    tty: true
+    environment:
+      - GOPATH=/opt/gopath
+      - CORE_VM_ENDPOINT=unix:///host/var/run/docker.sock
+      - FABRIC_LOGGING_SPEC=INFO
+      - CORE_PEER_ID=cli
+      - CORE_PEER_ADDRESS=peer0.sales2.hub.com:7051
+      - CORE_PEER_LOCALMSPID=Sales2Org
+      - CORE_PEER_MSPCONFIGPATH=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/sales2.hub.com/users/Admin@sales2.hub.com/msp
+      - CORE_CHAINCODE_KEEPALIVE=10
+    working_dir: /opt/gopath/src/github.com/hyperledger/fabric/peer
+    command: /bin/bash
+    volumes:
+        - /var/run/:/host/var/run/
+        - ./../chaincode/:/opt/gopath/src/chaincode/
+        - ./crypto-config:/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/
+        - ./config:/etc/hyperledger/configtx
+    networks:
+      - hangaram

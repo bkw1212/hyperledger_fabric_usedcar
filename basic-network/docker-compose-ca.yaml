@@ -1,0 +1,37 @@
+version: '2'
+
+networks:
+  hangaram:
+
+services:
+  ca.sales1.hub.com:
+    image: hyperledger/fabric-ca
+    environment:
+      - FABRIC_CA_HOME=/etc/hyperledger/fabric-ca-server
+      - FABRIC_CA_SERVER_CA_NAME=ca.sales1.hub.com
+      - FABRIC_CA_SERVER_CA_CERTFILE=/etc/hyperledger/fabric-ca-server-config/ca.sales1.hub.com-cert.pem
+      - FABRIC_CA_SERVER_CA_KEYFILE=/etc/hyperledger/fabric-ca-server-config/f0c161b4e2bb9cf425b88a4451f9f630ce4d20f23d18fbfe5be9fc1a5f1d7947_sk
+    ports:
+      - "7054:7054"
+    command: sh -c 'fabric-ca-server start -b admin:adminpw -d'
+    volumes:
+      - ./crypto-config/peerOrganizations/sales1.hub.com/ca/:/etc/hyperledger/fabric-ca-server-config
+    container_name: ca.sales1.hub.com
+    networks:
+      - hangaram
+
+  ca.sales2.hub.com:
+    image: hyperledger/fabric-ca
+    environment:
+      - FABRIC_CA_HOME=/etc/hyperledger/fabric-ca-server
+      - FABRIC_CA_SERVER_CA_NAME=ca.sales2.hub.com
+      - FABRIC_CA_SERVER_CA_CERTFILE=/etc/hyperledger/fabric-ca-server-config/ca.sales2.hub.com-cert.pem
+      - FABRIC_CA_SERVER_CA_KEYFILE=/etc/hyperledger/fabric-ca-server-config/d8dff3efaf04dd9e3435ce9ab55299c6ce7f24df9edc7a861fa5560acb008e23_sk
+    ports:
+      - "8054:7054"
+    command: sh -c 'fabric-ca-server start -b admin:adminpw -d'
+    volumes:
+      - ./crypto-config/peerOrganizations/sales2.hub.com/ca/:/etc/hyperledger/fabric-ca-server-config
+    container_name: ca.sales2.hub.com
+    networks:
+      - hangaram

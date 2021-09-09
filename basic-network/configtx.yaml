@@ -1,0 +1,121 @@
+Organizations:
+
+    - &OrdererOrg
+        Name: OrdererOrg
+        ID: OrdererOrg
+        MSPDir: crypto-config/ordererOrganizations/hub.com/msp
+
+    - &Sales1Org
+        Name: Sales1Org
+        ID: Sales1Org
+        MSPDir: crypto-config/peerOrganizations/sales1.hub.com/msp
+        AnchorPeers:
+            - Host: peer0.sales1.hub.com
+              Port: 7051
+    - &Sales2Org
+        Name: Sales2Org
+        ID: Sales2Org
+        MSPDir: crypto-config/peerOrganizations/sales2.hub.com/msp
+        AnchorPeers:
+            - Host: peer0.sales2.hub.com
+              Port: 7051
+
+    - &CustomerOrg
+        Name: CustomerOrg
+        ID: CustomerOrg
+        MSPDir: crypto-config/peerOrganizations/customer.hub.com/msp
+        AnchorPeers:
+            - Host: peer0.customer.hub.com
+              Port: 7051
+    
+#    - &Insurance1Org
+#        Name: Insurance1Org
+#        ID: Insurance1Org
+#        MSPDir: crypto-config/peerOrganizations/insurance1.hub.com/msp
+#        AnchorPeers:
+#            - Host: peer0.insurance1.hub.com
+#              Port: 7051
+
+#    - &Insurance2Org
+#        Name: Insurance2Org
+#        ID: Insurance2Org
+#        MSPDir: crypto-config/peerOrganizations/insurance2.hub.com/msp
+#        AnchorPeers:
+#            - Host: peer0.insurance2.hub.com
+#              Port: 7051
+
+#    - &Repair1Org
+#        Name: Repair1Org
+#        ID: Repair1Org
+#        MSPDir: crypto-config/peerOrganizations/repair1.hub.com/msp
+#        AnchorPeers:
+#            - Host: peer0.repair1.hub.com
+#              Port: 7051
+
+#    - &Repair2Org
+#        Name: Repair2Org
+#        ID: Repair2Org
+#        MSPDir: crypto-config/peerOrganizations/repair2.hub.com/msp
+#        AnchorPeers:
+#            - Host: peer0.repair2.hub.com
+#              Port: 7051
+
+Orderer: &OrdererDefaults
+
+    OrdererType: kafka
+    Addresses:
+        - orderer1.hub.com:7050
+        - orderer2.hub.com:7050
+    BatchTimeout: 2s
+    BatchSize:
+        MaxMessageCount: 10
+        AbsoluteMaxBytes: 99 MB
+        PreferredMaxBytes: 512 KB
+    Kafka:
+        Brokers:
+            - kafka1.hub.com:9092
+            - kafka2.hub.com:9092
+            - kafka3.hub.com:9092
+            - kafka4.hub.com:9092
+
+    Organizations:
+
+Application: &ApplicationDefaults
+    Organizations:
+
+Profiles:
+
+    OrdererGenesis:
+        Orderer:
+            <<: *OrdererDefaults
+            Organizations:
+                - *OrdererOrg
+        Consortiums:
+            SampleConsortium:
+                Organizations:
+                    - *Sales1Org
+                    - *Sales2Org
+                    - *CustomerOrg
+                    #- *Insurance1Org
+                    #- *Insurance2Org
+                    #- *Repair1Org
+                    #- *Repair2Org
+    Channel1:
+        Consortium: SampleConsortium
+        Application:
+            <<: *ApplicationDefaults
+            Organizations:
+                - *Sales1Org
+                #- *Insurance1Org
+                #- *Repair1Org
+                - *CustomerOrg
+    
+    Channel2:
+        Consortium: SampleConsortium
+        Application:
+            <<: *ApplicationDefaults
+            Organizations:
+                - *Sales2Org
+                #- *Insurance2Org
+                #- *Repair2Org
+                - *CustomerOrg

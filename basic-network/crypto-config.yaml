@@ -1,0 +1,51 @@
+OrdererOrgs:
+  - Name: Orderer
+    Domain: hub.com
+    Specs:
+      - Hostname: orderer1
+      - Hostname: orderer2
+
+PeerOrgs:
+  - Name: Sales1
+    Domain: sales1.hub.com
+    Template:
+      Count: 2
+    Users:
+      Count: 1
+  - Name: Sales2
+    Domain: sales2.hub.com
+    Template:
+      Count: 2
+    Users:
+      Count: 1
+#  - Name: Insurance1
+#    Domain: insurance1.hub.com
+#    Template:
+#      Count: 2
+#    Users:
+#      Count: 1
+#  - Name: Insurance2
+#    Domain: insurance2.hub.com
+#    Template:
+#      Count: 2
+#    Users:
+#      Count: 1
+#  - Name: Repair1
+#    Domain: repair1.hub.com
+#    Template:
+#      Count: 2
+#    Users:
+#      Count: 1
+#  - Name: Repair2
+#    Domain: repair2.hub.com
+#    Template:
+#      Count: 2
+#    Users:
+#      Count: 1
+
+  - Name: Customer
+    Domain: customer.hub.com
+    Template:
+      Count: 2
+    Users:
+      Count: 1
