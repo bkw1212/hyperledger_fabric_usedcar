@@ -821,7 +821,6 @@ func (s *SmartContract) login(APIstub shim.ChaincodeStubInterface, args []string
         return shim.Error("User not found")
     }
 
-	// decrypt user[]byte("Status: " + asset.Status)
     var user Wallet
     json.Unmarshal(value, & user)
 
@@ -830,7 +829,6 @@ func (s *SmartContract) login(APIstub shim.ChaincodeStubInterface, args []string
         return shim.Error("Credentials not correct")
     }
 
-	// get asset info
     return shim.Success(nil)
 }
 
