@@ -48,7 +48,8 @@ module.exports = function(app){
     var engineer = req.query.engineer;
     var date = req.query.date;
     var rcar = req.query.rcar;
-    let args = [engineer, date, rcar];
+    var information = req.query.information
+    let args = [engineer, date, rcar, information];
     sdk.send(true, 'setRepair', args, res);
   });
   app.get('/api/getRepair', function(req, res){
@@ -57,7 +58,7 @@ module.exports = function(app){
     sdk.send(false, 'getRepair', args, res);
   });
 
-  app.get('/api/setInsurance', function (req, res) {
+  /*app.get('/api/setInsurance', function (req, res) {
     var icar = req.query.icar;
     var turm = req.query.turm;
     let args = [icar, turm];
@@ -74,15 +75,15 @@ module.exports = function(app){
     var turm = req.query.turm;
     let args = [insurancekey, turm];
     sdk.send(true, 'setRenewal', args, res);
-  });
+  });*/
 
   app.get('/api/getAllRepair', function (req, res) {
     let args = [];
     sdk.send(false, 'getAllRepair', args, res);
   });
 
-  app.get('/api/getAllInsurance', function (req, res) {
+  /*app.get('/api/getAllInsurance', function (req, res) {
     let args = [];
     sdk.send(false, 'getAllInsurance', args, res);
-  });
+  });*/
 }

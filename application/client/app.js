@@ -104,6 +104,7 @@ app.controller('AppCtrl', function($scope, appFactory){
                                 data[i].engineer = data[i].Engineer;
                                 data[i].date = data[i].Date;
                                 data[i].car = data[i].Rcar;
+                                data[i].information = data[i].Information;
                                 array.push(data[i]);
                         }
                         $scope.allRepair = array;
@@ -126,7 +127,7 @@ app.controller('AppCtrl', function($scope, appFactory){
                 });
         }
 
-        $scope.setInsurance = function(){
+/*        $scope.setInsurance = function(){
                 appFactory.setInsurance($scope.insurance, function(data){
                             $scope.create_insurance = data;
                             $("#success_setinsurance").show();
@@ -170,7 +171,7 @@ app.controller('AppCtrl', function($scope, appFactory){
                             $("#success_setrenewal").show();
                 });
         }
-        
+*/        
         
 });
 
@@ -211,7 +212,7 @@ app.controller('AppCtrl', function($scope, appFactory){
                 });
         }
         factory.setRepair = function(data, callback){
-                $http.get('/api/setRepair?engineer='+data.engineer+'&date='+data.date+'&rcar='+data.rcar).success(function(output){
+                $http.get('/api/setRepair?engineer='+data.engineer+'&date='+data.date+'&rcar='+data.rcar+'&information='+data.information).success(function(output){
                             callback(output)
                     });
         }
@@ -227,7 +228,7 @@ app.controller('AppCtrl', function($scope, appFactory){
                     });
         }
 
-        factory.setInsurance = function(data, callback){
+        /*factory.setInsurance = function(data, callback){
                 $http.get('/api/setInsurance?icar='+data.icar+'&turm='+data.turm).success(function(output){
                             callback(output)
                     });
@@ -248,6 +249,6 @@ app.controller('AppCtrl', function($scope, appFactory){
                 $http.get('/api/setRenewal?insurancekey='+data_n.insurancekey+'&turm='+data_n.turm).success(function(output){
                             callback(output)
                     });
-        }
+        }*/
         return factory;
 });

@@ -124,7 +124,7 @@
 
       <div class="form-group">
         <h5 style="color:green;margin-bottom:2%" id="success_getrepair">Success to query</h5>
-        <label>수리 내역 조회</label>
+        <label>사고 및 수리 내역 조회</label>
         <p><input class="form-control" type="text" placeholder="Ex: REPAIR1" ng-model="repairkey">
         <input id="getRepair" type="submit" value="Search" class="btn btn-primary" ng-click="getRepair()"></p>
         <p><input id="getAllRepair" type="submit" value="Get all repair" class="btn btn-primary" ng-click="getAllRepair()"></p>
@@ -135,12 +135,14 @@
             <th>Engineer</th>
             <th>Date</th>
             <th>Car</th>
+            <th>Information</th>
           </tr>
           <tr ng-repeat="repair in allRepair">
             <td>{{repair.Key}}</td>
             <td>{{repair.engineer}}</td>
             <td>{{repair.date}}</td>
             <td>{{repair.rcar}}</td>
+            <td>{{repair.informaion}}</td>
           </tr>
         </table>
       <div class="form-group">
@@ -149,11 +151,12 @@
           <br>
           Engineer: <input class="form-control" type="text" placeholder="Ex: Byun Kyo Woong" ng-model="repair.engineer">
           Date: <input class="form-control" type="text" placeholder="Ex: 2021/08/08" ng-model="repair.date">
-          Carkey: <input class="form-control" type="text" placeholder="Ex: CAR1" ng-model="repair.rcar"> 
+          Carkey: <input class="form-control" type="text" placeholder="Ex: CAR1" ng-model="repair.rcar">
+          Information: <input class="form-control" type="text" placeholder="Ex: 추돌사고 - 차체수리" ng-model="repair.information"> 
           <input id="setRepair" type="submit" value="Create" class="btn btn-primary" ng-click="setRepair()"> 
       </div>
 
-      <div class="form-group">
+<!--      <div class="form-group">
         <h5 style="color:green;margin-bottom:2%" id="success_getinsurance">Success to query</h5>
         <label>보험 조회</label>
         <p><input class="form-control" type="text" placeholder="Ex: INSURANCE1" ng-model="insurancekey">
@@ -189,7 +192,7 @@
         InsuranceKey: <input class="form-control" type="text" placeholder="Ex: INSURANCE1" ng-model="renewal.insurancekey">
         Turm: <input class="form-control" type="text" placeholder="Ex: 2021/08/08 ~ 2023/08/07" ng-model="renewal.turm"> 
         <input id="setRenewal" type="submit" value="Change" class="btn btn-primary" ng-click="setRenewal()"> 
-      </div>
+      </div> -->
     </div>
  </body>
   <script type="text/javascript" src="app.js"> </script>
