@@ -221,7 +221,7 @@ type InsuranceKey struct {
 	I_Idx int
 }
 
-func generateKeyInsurance(APIstub shim.ChaincodeStubInterface, key string) []byte {
+/*func generateKeyInsurance(APIstub shim.ChaincodeStubInterface, key string) []byte {
 
 	var isFirst bool = false
 
@@ -250,7 +250,7 @@ func generateKeyInsurance(APIstub shim.ChaincodeStubInterface, key string) []byt
 
 	return returnValueBytesrs
 }
-
+*/
 func (s *SmartContract) setWallet(APIstub shim.ChaincodeStubInterface, args []string) pb.Response {
 	if len(args) != 3 {
 		return shim.Error("Incorrect number of arguments. Expecting 3")
@@ -484,16 +484,17 @@ func (s *SmartContract) deleteCar(APIstub shim.ChaincodeStubInterface, args []st
 }
 
 type Repair struct {
-	Engineer string `json:"engineer"`
-	Date     string `json:"date"`
-	Rcar     string `json:"rcar"`
+	Engineer    string `json:"engineer"`
+	Date        string `json:"date"`
+	Rcar        string `json:"rcar"`
+	Information string `json:"information"`
 }
 
 func (s *SmartContract) setRepair(APIstub shim.ChaincodeStubInterface, args []string) pb.Response {
 	var repaircount int
 
-	if len(args) != 3 {
-		return shim.Error("Incorrect number of arguments. Expecting 3")
+	if len(args) != 4 {
+		return shim.Error("Incorrect number of arguments. Expecting 4")
 	}
 
 	var repairkey = RepairKey{}
@@ -501,7 +502,7 @@ func (s *SmartContract) setRepair(APIstub shim.ChaincodeStubInterface, args []st
 	keyidx := strconv.Itoa(repairkey.R_Idx)
 	fmt.Println("Key : " + repairkey.R_Key + ", Idx : " + keyidx)
 
-	var repair = Repair{Engineer: args[0], Date: args[1], Rcar: args[2]}
+	var repair = Repair{Engineer: args[0], Date: args[1], Rcar: args[2], Information: args[3]}
 
 	RepairJSONBytes, _ := json.Marshal(repair)
 
@@ -620,7 +621,7 @@ func (s *SmartContract) getAllRepair(APIstub shim.ChaincodeStubInterface) pb.Res
 	return shim.Success(buffer.Bytes())
 }
 
-type Insurance struct {
+/*type Insurance struct {
 	Icar string `json:"icar"`
 	Turm string `json:"turm"`
 }
@@ -760,7 +761,7 @@ func (s *SmartContract) setRenewal(APIstub shim.ChaincodeStubInterface, args []s
 	return shim.Success(nil)
 
 }
-
+*/
 func (s *SmartContract) creatUser(APIstub shim.ChaincodeStubInterface, args []string) pb.Response {
 
 	if len(args) != 4 {

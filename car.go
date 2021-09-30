@@ -487,6 +487,7 @@ func (s *SmartContract) deleteCar(APIstub shim.ChaincodeStubInterface, args []st
 type Repair struct {
 	Engineer    string `json:"engineer"`
 	Date        string `json:"date"`
+	Information	string `json:"infomation"`
 	Rcar		string `json:"rcar"`
 }
 
@@ -494,7 +495,7 @@ type Repair struct {
 func (s *SmartContract) setRepair(APIstub shim.ChaincodeStubInterface, args []string) pb.Response {
 	var repaircount int
 
-	if len(args) != 3 {
+	if len(args) != 4 {
 		return shim.Error("Incorrect number of arguments. Expecting 3")
 	}
 
@@ -503,7 +504,7 @@ func (s *SmartContract) setRepair(APIstub shim.ChaincodeStubInterface, args []st
 	keyidx := strconv.Itoa(repairkey.R_Idx)
 	fmt.Println("Key : " + repairkey.R_Key + ", Idx : " + keyidx)
 
-	var repair = Repair{Engineer: args[0], Date: args[1], Rcar: args[2]}
+	var repair = Repair{Engineer: args[0], Date: args[1], Infomation: args[2], Rcar: args[3]}
 
 	RepairJSONBytes, _ := json.Marshal(repair)
 
@@ -518,7 +519,7 @@ func (s *SmartContract) setRepair(APIstub shim.ChaincodeStubInterface, args []st
 	repairkeyAsBytes, _ := json.Marshal(repairkey)
 	APIstub.PutState("r_latestKey", repairkeyAsBytes)
 
-	repairAsBytes, err := APIstub.GetState(args[2])
+	repairAsBytes, err := APIstub.GetState(args[3])
 	if err != nil {
 		return shim.Error(err.Error())
 	}

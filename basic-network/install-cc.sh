@@ -38,10 +38,10 @@ sleep 2
 docker exec cli1 peer chaincode invoke -o orderer1.hub.com:7050 -C channelsales1 -n car-cc-ch1 -c '{"function":"purchaseCar","Args":["lmj1212", "bkw1212", "CAR0"]}'
 sleep 2
 
-docker exec cli1 peer chaincode invoke -o orderer1.hub.com:7050 -C channelsales1 -n car-cc-ch1 -c '{"function":"setRepair","Args":["baek", "2021/06/14", "CAR1"]}'
+docker exec cli1 peer chaincode invoke -o orderer1.hub.com:7050 -C channelsales1 -n car-cc-ch1 -c '{"function":"setRepair","Args":["baek", "2021/06/14", "CAR1", "추돌사고 - 타이어 휠 교체 및 엔진 점검"]}'
 sleep 2
 
-docker exec cli1 peer chaincode invoke -o orderer1.hub.com:7050 -C channelsales1 -n car-cc-ch1 -c '{"function":"setRepair","Args":["baek", "2021/09/29", "CAR1"]}'
+docker exec cli1 peer chaincode invoke -o orderer1.hub.com:7050 -C channelsales1 -n car-cc-ch1 -c '{"function":"setRepair","Args":["baek", "2021/09/29", "CAR1", "추돌사고 - 차체수리 "]}'
 sleep 2
 
 docker exec cli1 peer chaincode invoke -o orderer1.hub.com:7050 -C channelsales1 -n car-cc-ch1 -c '{"function":"getRepair","Args":["REPAIR0"]}'
@@ -50,23 +50,23 @@ sleep 2
 docker exec cli1 peer chaincode invoke -o orderer1.hub.com:7050 -C channelsales1 -n car-cc-ch1 -c '{"function":"getAllRepair","Args":[""]}'
 sleep 2
 
-docker exec cli1 peer chaincode invoke -o orderer1.hub.com:7050 -C channelsales1 -n car-cc-ch1 -c '{"function":"setInsurance","Args":["CAR1", "2021/06/14 ~ 2022/06/14"]}'
-sleep 2
+#docker exec cli1 peer chaincode invoke -o orderer1.hub.com:7050 -C channelsales1 -n car-cc-ch1 -c '{"function":"setInsurance","Args":["CAR1", "2021/06/14 ~ 2022/06/14"]}'
+#sleep 2
 
-docker exec cli1 peer chaincode invoke -o orderer1.hub.com:7050 -C channelsales1 -n car-cc-ch1 -c '{"function":"setInsurance","Args":["CAR0", "2021/01/14 ~ 2022/01/14"]}'
-sleep 2
+#docker exec cli1 peer chaincode invoke -o orderer1.hub.com:7050 -C channelsales1 -n car-cc-ch1 -c '{"function":"setInsurance","Args":["CAR0", "2021/01/14 ~ 2022/01/14"]}'
+#sleep 2
 
-docker exec cli1 peer chaincode query -o orderer1.hub.com:7050 -C channelsales1 -n car-cc-ch1 -c '{"function":"getInsurance","Args":["INSURANCE0"]}'
-sleep 3
+#docker exec cli1 peer chaincode query -o orderer1.hub.com:7050 -C channelsales1 -n car-cc-ch1 -c '{"function":"getInsurance","Args":["INSURANCE0"]}'
+#sleep 3
 
-docker exec cli1 peer chaincode invoke -o orderer1.hub.com:7050 -C channelsales1 -n car-cc-ch1 -c '{"function":"setRenewal","Args":["INSURANCE0", "2022/06/14 ~ 2023/06/14"]}'
+#docker exec cli1 peer chaincode invoke -o orderer1.hub.com:7050 -C channelsales1 -n car-cc-ch1 -c '{"function":"setRenewal","Args":["INSURANCE0", "2022/06/14 ~ 2023/06/14"]}'
 sleep 2
 
 #docker exec cli1 peer chaincode invoke -o orderer1.hub.com:7050 -C channelsales1 -n car-cc-ch1 -c '{"function":"setRenewal","Args":["INSURANCE1", "2022/06/14 ~ 2023/06/14"]}'
 #sleep 2
 
-docker exec cli1 peer chaincode query -o orderer1.hub.com:7050 -C channelsales1 -n car-cc-ch1 -c '{"function":"getInsurance","Args":["INSURANCE0"]}'
-sleep 2
+#docker exec cli1 peer chaincode query -o orderer1.hub.com:7050 -C channelsales1 -n car-cc-ch1 -c '{"function":"getInsurance","Args":["INSURANCE0"]}'
+#sleep 2
 
 #docker exec cli1 peer chaincode invoke -o orderer1.hub.com:7050 -C channelsales1 -n car-cc-ch1 -c '{"function":"creatUser","Args":["bkw1212", "k970307r"]}'
 #sleep 2
