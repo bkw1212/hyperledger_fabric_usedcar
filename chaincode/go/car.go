@@ -39,16 +39,16 @@ func (s *SmartContract) Invoke(APIstub shim.ChaincodeStubInterface) pb.Response 
 		return s.setRepair(APIstub, args)
 	} else if function == "getRepair" {
 		return s.getRepair(APIstub, args)
-	} else if function == "getInsurance" {
-		return s.getInsurance(APIstub, args)
-	} else if function == "setInsurance" {
-		return s.setInsurance(APIstub, args)
-	} else if function == "setRenewal" {
-		return s.setInsurance(APIstub, args)
+		/*} else if function == "getInsurance" {
+			return s.getInsurance(APIstub, args)
+		} else if function == "setInsurance" {
+			return s.setInsurance(APIstub, args)
+		} else if function == "setRenewal" {
+			return s.setRenewal(APIstub, args)*/
 	} else if function == "getAllRepair" {
 		return s.getAllRepair(APIstub)
-	} else if function == "getAllInsurance" {
-		return s.getAllInsurance(APIstub)
+		/*} else if function == "getAllInsurance" {
+		return s.getAllInsurance(APIstub)*/
 	} else if function == "login" {
 		return s.login(APIstub, args)
 	} else if function == "creatUser" {
