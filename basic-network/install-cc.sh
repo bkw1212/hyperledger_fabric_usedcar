@@ -2,10 +2,10 @@
 set -ev
 
 # install chaincode for channelsales1
-docker exec cli1 peer chaincode install -n car-cc-ch1 -v 1.0.7 -p chaincode/go
+docker exec cli1 peer chaincode install -n car-cc-ch1 -v 1.0.6 -p chaincode/go
 sleep 1
 # instantiate chaincode for channelsales1
-docker exec cli1 peer chaincode instantiate -o orderer1.hub.com:7050 -C channelsales1 -n car-cc-ch1 -v 1.0.7 -c '{"Args":[""]}' -P "OR ('Sales1Org.member','CustomerOrg.member', 'Insurance1Org.member', 'Repair1.member')"
+docker exec cli1 peer chaincode instantiate -o orderer1.hub.com:7050 -C channelsales1 -n car-cc-ch1 -v 1.0.6 -c '{"Args":[""]}' -P "OR ('Sales1Org.member','CustomerOrg.member', 'Insurance1Org.member', 'Repair1.member')"
 sleep 6
 # invoke chaincode for channelsales1
 #docker exec cli1 peer chaincode invoke -o orderer1.hub.com:7050 -C channelsales1 -n car-cc-ch1 -c '{"function":"initWallet","Args":[""]}'
