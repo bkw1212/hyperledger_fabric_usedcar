@@ -70,11 +70,11 @@ func main() {
 }
 
 type Wallet struct {
-	Name     string `json:"name"`
-	ID       string `json:"id"`
-	Password string `json:"password"`
-	Token    string `json:"token"`
-	RepairAthority   string `json:"repairathority"`
+	Name           string `json:"name"`
+	ID             string `json:"id"`
+	Password       string `json:"password"`
+	Token          string `json:"token"`
+	RepairAthority string `json:"repairathority"`
 }
 
 func (s *SmartContract) initWallet(APIstub shim.ChaincodeStubInterface) pb.Response {
@@ -139,33 +139,33 @@ func (s *SmartContract) getWallet(APIstub shim.ChaincodeStubInterface, args []st
 }
 
 type Car struct {
-	Thumbnail	       string `json:"thumbnail"`
-	Title 		       string `json:"title"`
-	Country 	       string `json:"contry"`
-	CarType 	       string `json:"cartype"`
-	Manufacturer       string `json:"Manufacturer"`
-	Model              string `json:"model"`
-	ModelGen           string `json:"modelgen"`
-	ModelDetail        string `json:"modeldetail"`
-	Year               string `json:"year"`
-	YearDetail         string `json:"yeardetail"`
-	DistanceDriven	   string `json:"distancedriven"`
-	Price              string `json:"price"`
-	SellerCategory     string `json:"sellercategory"`
-	Color              string `json:"color"`
-	Fuel               string `json:"fuel"`
-	Gearbox            string `json:"Gearbox"`
-	Option             string `json:"option"`
-	Accident           string `json:"accident"`
-	Seaters            string `json:"seaters"`
-	Region             string `json:"region"`
-	Badge              string `json:"badge"`
-	InsuranceHistory   string `json:"insurancehistory"`
-	Shipping		   string `json:"shipping"`
-	WalletID           string `json:"walletid"`
-	SellerName         string `json:"sellername"`
-	PurchaseCount      string `json:"purchasecount"`
-	RepairCount        string `json:"repaircount"`
+	Thumbnail        string `json:"thumbnail"`
+	Title            string `json:"title"`
+	Country          string `json:"contry"`
+	CarType          string `json:"cartype"`
+	Manufacturer     string `json:"manufacturer"`
+	Model            string `json:"model"`
+	ModelGen         string `json:"modelgen"`
+	ModelDetail      string `json:"modeldetail"`
+	Year             string `json:"year"`
+	YearDetail       string `json:"yeardetail"`
+	DistanceDriven   string `json:"distancedriven"`
+	Price            string `json:"price"`
+	SellerCategory   string `json:"sellercategory"`
+	Color            string `json:"color"`
+	Fuel             string `json:"fuel"`
+	Gearbox          string `json:"gearbox"`
+	Option           string `json:"option"`
+	Accident         string `json:"accident"`
+	Seaters          string `json:"seaters"`
+	Region           string `json:"region"`
+	Badge            string `json:"badge"`
+	InsuranceHistory string `json:"insurancehistory"`
+	Shipping         string `json:"shipping"`
+	WalletID         string `json:"walletid"`
+	SellerName       string `json:"sellername"`
+	PurchaseCount    string `json:"purchasecount"`
+	RepairCount      string `json:"repaircount"`
 }
 
 type CarKey struct {
@@ -298,8 +298,8 @@ func (s *SmartContract) setCar(APIstub shim.ChaincodeStubInterface, args []strin
 	fmt.Println("Key : " + carkey.Key + ", Idx : " + keyidx)
 
 	var car = Car{Thumbnail: args[0], Title: args[1], Country: args[2], CarType: args[3], Manufacturer: args[4],
-		Model: args[5], ModelGen: args[6], ModelDetail: args[7], Year: args[8], YearDetail: args[9], DistanceDriven: args[10], Price: args[11], 
-		SellerCategory: args[12], Color: args[13], Fuel: args[14], Gearbox: args[15], Option: args[16], 
+		Model: args[5], ModelGen: args[6], ModelDetail: args[7], Year: args[8], YearDetail: args[9], DistanceDriven: args[10], Price: args[11],
+		SellerCategory: args[12], Color: args[13], Fuel: args[14], Gearbox: args[15], Option: args[16],
 		Accident: args[17], Seaters: args[18], Region: args[19], Badge: args[20], InsuranceHistory: args[21],
 		Shipping: args[22], WalletID: args[23], SellerName: args[24], PurchaseCount: "0", RepairCount: "0"}
 
