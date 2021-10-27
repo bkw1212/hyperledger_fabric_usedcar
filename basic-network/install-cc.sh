@@ -27,7 +27,7 @@ sleep 2
 docker exec cli1 peer chaincode invoke -o orderer1.hub.com:7050 -C channelsales1 -n car-cc-ch1 -c '{"function":"setCar","Args":["images/car/21796908_38170248637671208.jpeg", "제네시스 G80(DH) 3.3 GHI AWD 프리미엄 럭셔리", 
 "국산", "준대형차", "현대", "G80", "G80(DH)", "3.3 GDI AWD 프리미엄 럭셔리", "2018", "18년01월(18년식)", "37541", "38900000", "개인", "검정색", "가솔린", "오토", "", "X", "4", "경기", "new", "", "", "bkw1212", "변교웅"]}'
 sleep 2
-docker exec cli1 peer chaincode invoke -o orderer1.hub.com:7050 -C channelsales1 -n car-cc-ch1 -c '{"function":"setCar","Args":[""images/car/21796908_3817035435436436.jpeg", "뭐시기뭐시기 차 팝니다.", 
+docker exec cli1 peer chaincode invoke -o orderer1.hub.com:7050 -C channelsales1 -n car-cc-ch1 -c '{"function":"setCar","Args":["images/car/21796908_3817035435436436.jpeg", "뭐시기뭐시기 차 팝니다.", 
 "국산", "준대형차", "벤츠", "S350d", "S350d", "뭐시기뭐시기", "2021", "21년01월(21년식)", "37541", "38900000", "개인", "검정색", "가솔린", "오토", "", "X", "4", "경기", "new", "", "", "bkw1212", "변교웅"]}'
 
 sleep 3
