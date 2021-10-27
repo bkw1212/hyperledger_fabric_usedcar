@@ -14,21 +14,22 @@ sleep 6
 #docker exec cli1 peer chaincode invoke -o orderer1.hub.com:7050 -C channelsales1 -n car-cc-ch1 -c '{"function":"setWallet","Args":["Lee", "lmj1212", "400"]}'
 #sleep 3
 
-docker exec cli1 peer chaincode invoke -o orderer1.hub.com:7050 -C channelsales1 -n car-cc-ch1 -c '{"function":"creatUser","Args":["Lee", "lmj1212","1234567", "400"]}'
+docker exec cli1 peer chaincode invoke -o orderer1.hub.com:7050 -C channelsales1 -n car-cc-ch1 -c '{"function":"creatUser","Args":["Lee", "lmj1212","1234567", "400", "0"]}'
 sleep 3
 
-docker exec cli1 peer chaincode invoke -o orderer1.hub.com:7050 -C channelsales1 -n car-cc-ch1 -c '{"function":"creatUser","Args":["Byun", "bkw1212","2345678", "200"]}'
+docker exec cli1 peer chaincode invoke -o orderer1.hub.com:7050 -C channelsales1 -n car-cc-ch1 -c '{"function":"creatUser","Args":["Byun", "bkw1212","2345678", "200", "1"]}'
 sleep 2
 
 docker exec cli1 peer chaincode query -o orderer1.hub.com:7050 -C channelsales1 -n car-cc-ch1 -c '{"function":"login","Args":["bkw1212","2345678"]}'
 sleep 2
 
 
-docker exec cli1 peer chaincode invoke -o orderer1.hub.com:7050 -C channelsales1 -n car-cc-ch1 -c '{"function":"setCar","Args":["G90", "Genesis", "40", "bkw1212"]}'
+docker exec cli1 peer chaincode invoke -o orderer1.hub.com:7050 -C channelsales1 -n car-cc-ch1 -c '{"function":"setCar","Args":["images/car/21796908_38170248637671208.jpeg", "제네시스 G80(DH) 3.3 GHI AWD 프리미엄 럭셔리", 
+"국산", "준대형차", "현대", "G80", "G80(DH)", "3.3 GDI AWD 프리미엄 럭셔리", "2018", "18년01월(18년식)", "37541", "38900000", "개인", "검정색", "가솔린", "오토", "", "X", "4", "경기", "new", "", "", "bkw1212", "변교웅"]}'
 sleep 2
-docker exec cli1 peer chaincode invoke -o orderer1.hub.com:7050 -C channelsales1 -n car-cc-ch1 -c '{"function":"setCar","Args":["K9", "KIA", "30", "bkw1212"]}'
-sleep 2
-docker exec cli1 peer chaincode invoke -o orderer1.hub.com:7050 -C channelsales1 -n car-cc-ch1 -c '{"function":"setCar","Args":["Sonata", "Hyundai", "20", "bkw1212"]}'
+docker exec cli1 peer chaincode invoke -o orderer1.hub.com:7050 -C channelsales1 -n car-cc-ch1 -c '{"function":"setCar","Args":[""images/car/21796908_3817035435436436.jpeg", "뭐시기뭐시기 차 팝니다.", 
+"국산", "준대형차", "벤츠", "S350d", "S350d", "뭐시기뭐시기", "2021", "21년01월(21년식)", "37541", "38900000", "개인", "검정색", "가솔린", "오토", "", "X", "4", "경기", "new", "", "", "bkw1212", "변교웅"]}'
+
 sleep 3
 
 # query chaincode for channelsales1

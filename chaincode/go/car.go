@@ -74,6 +74,7 @@ type Wallet struct {
 	ID       string `json:"id"`
 	Password string `json:"password"`
 	Token    string `json:"token"`
+	RepairAthority   string `json:"repairathority"`
 }
 
 func (s *SmartContract) initWallet(APIstub shim.ChaincodeStubInterface) pb.Response {
@@ -138,12 +139,33 @@ func (s *SmartContract) getWallet(APIstub shim.ChaincodeStubInterface, args []st
 }
 
 type Car struct {
-	Model         string `json:"model"`
-	Maker         string `json:"maker"`
-	Price         string `json:"price"`
-	WalletID      string `json:"walletid"`
-	PurchaseCount string `json:"purchasecount"`
-	RepairCount   string `json:"repaircount"`
+	Thumbnail	       string `json:"thumbnail"`
+	Title 		       string `json:"title"`
+	Country 	       string `json:"contry"`
+	CarType 	       string `json:"cartype"`
+	Manufacturer       string `json:"Manufacturer"`
+	Model              string `json:"model"`
+	ModelGen           string `json:"modelgen"`
+	ModelDetail        string `json:"modeldetail"`
+	Year               string `json:"year"`
+	YearDetail         string `json:"yeardetail"`
+	DistanceDriven	   string `json:"distancedriven"`
+	Price              string `json:"price"`
+	SellerCategory     string `json:"sellercategory"`
+	Color              string `json:"color"`
+	Fuel               string `json:"fuel"`
+	Gearbox            string `json:"Gearbox"`
+	Option             string `json:"option"`
+	Accident           string `json:"accident"`
+	Seaters            string `json:"seaters"`
+	Region             string `json:"region"`
+	Badge              string `json:"badge"`
+	InsuranceHistory   string `json:"insurancehistory"`
+	Shipping		   string `json:"shipping"`
+	WalletID           string `json:"walletid"`
+	SellerName         string `json:"sellername"`
+	PurchaseCount      string `json:"purchasecount"`
+	RepairCount        string `json:"repaircount"`
 }
 
 type CarKey struct {
@@ -266,8 +288,8 @@ func (s *SmartContract) setWallet(APIstub shim.ChaincodeStubInterface, args []st
 }
 
 func (s *SmartContract) setCar(APIstub shim.ChaincodeStubInterface, args []string) pb.Response {
-	if len(args) != 4 {
-		return shim.Error("Incorrect number of arguments. Expecting 5")
+	if len(args) != 25 {
+		return shim.Error("Incorrect number of arguments. Expecting 23")
 	}
 
 	var carkey = CarKey{}
@@ -275,7 +297,12 @@ func (s *SmartContract) setCar(APIstub shim.ChaincodeStubInterface, args []strin
 	keyidx := strconv.Itoa(carkey.Idx)
 	fmt.Println("Key : " + carkey.Key + ", Idx : " + keyidx)
 
-	var car = Car{Model: args[0], Maker: args[1], Price: args[2], WalletID: args[3], PurchaseCount: "0", RepairCount: "0"}
+	var car = Car{Thumbnail: args[0], Title: args[1], Country: args[2], CarType: args[3], Manufacturer: args[4],
+		Model: args[5], ModelGen: args[6], ModelDetail: args[7], Year: args[8], YearDetail: args[9], DistanceDriven: args[10], Price: args[11], 
+		SellerCategory: args[12], Color: args[13], Fuel: args[14], Gearbox: args[15], Option: args[16], 
+		Accident: args[17], Seaters: args[18], Region: args[19], Badge: args[20], InsuranceHistory: args[21],
+		Shipping: args[22], WalletID: args[23], SellerName: args[24], PurchaseCount: "0", RepairCount: "0"}
+
 	carAsJSONBytes, _ := json.Marshal(car)
 
 	var keyString = carkey.Key + keyidx
@@ -443,11 +470,6 @@ func (s *SmartContract) getCar(APIstub shim.ChaincodeStubInterface, args []strin
 	buffer.WriteString("{\"Model\":")
 	buffer.WriteString("\"")
 	buffer.WriteString(car.Model)
-	buffer.WriteString("\"")
-
-	buffer.WriteString(", \"Maker\":")
-	buffer.WriteString("\"")
-	buffer.WriteString(car.Maker)
 	buffer.WriteString("\"")
 
 	buffer.WriteString(", \"Price\":")
@@ -764,7 +786,7 @@ func (s *SmartContract) setRenewal(APIstub shim.ChaincodeStubInterface, args []s
 */
 func (s *SmartContract) creatUser(APIstub shim.ChaincodeStubInterface, args []string) pb.Response {
 
-	if len(args) != 4 {
+	if len(args) != 5 {
 		return shim.Error("Incorrect number of arguments. Expecting 4")
 	}
 
@@ -782,7 +804,7 @@ func (s *SmartContract) creatUser(APIstub shim.ChaincodeStubInterface, args []st
 	}
 
 	// create user
-	user := Wallet{args[0], args[1], args[2], args[3]}
+	user := Wallet{args[0], args[1], args[2], args[3], args[4]}
 	userAsBytes, err := json.Marshal(user)
 	if err != nil {
 		return shim.Error(err.Error())
